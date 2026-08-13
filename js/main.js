@@ -3060,8 +3060,11 @@ const Game = (() => {
   let mapFlat = null;              // {ctx, scale, cx, cz, follow, dragging, moved, lx, ly, texKey}
   function flatCanvasToWorld(mx, my){
     const m = mapFlat;
-    const W = $('mapCanvas').width, H = $('mapCanvas').height;
-    return { x: m.cx + (mx - W / 2) / m.scale, z: m.cz + (my - H / 2) / m.scale };
+    const canvas = $('mapCanvas');
+    const rect = canvas.getBoundingClientRect();
+    const bx = mx * canvas.width / Math.max(1, rect.width);
+    const by = my * canvas.height / Math.max(1, rect.height);
+    return { x: m.cx + (bx - canvas.width / 2) / m.scale, z: m.cz + (by - canvas.height / 2) / m.scale };
   }
   function flatWorldToCanvas(wx, wz){
     const m = mapFlat;
@@ -3072,14 +3075,17 @@ const Game = (() => {
     if (mapFlat) return;
     const canvas = $('mapCanvas');
     const ctx = canvas.getContext('2d');
-    mapFlat = { ctx, scale: 1.4, cx: camTarget.x, cz: camTarget.z, follow: true, dragging: false, moved: 0, lx: 0, ly: 0, texKey: null };
+    mapFlat = { ctx, scale: 1.4, cx: camTarget.x, cz: camTarget.z, follow: true, dragging: false, moved: 0, lx: 0, ly: 0, texKey: null, pinch: null };
+    const mapTouches = new Map();
     canvas.addEventListener('mousedown', e => {
       if (!mapFlat) return;
       mapFlat.dragging = true; mapFlat.moved = 0; mapFlat.lx = e.clientX; mapFlat.ly = e.clientY;
     });
     window.addEventListener('mousemove', e => {
       if (!mapFlat || !mapFlat.dragging) return;
-      const dx = e.clientX - mapFlat.lx, dy = e.clientY - mapFlat.ly;
+      const rect = canvas.getBoundingClientRect();
+      const sx = canvas.width / Math.max(1, rect.width);
+      const dx = (e.clientX - mapFlat.lx) * sx, dy = (e.clientY - mapFlat.ly) * sx;
       mapFlat.lx = e.clientX; mapFlat.ly = e.clientY;
       mapFlat.moved += Math.abs(dx) + Math.abs(dy);
       mapFlat.cx -= dx / mapFlat.scale;
@@ -3092,6 +3098,61 @@ const Game = (() => {
       mapFlat.dragging = false;
       if (mapFlat.moved < 5 && e.target === canvas) flatMapClick(e);
     });
+    // 触屏交互：拖动平移 / 双指捏合缩放 / 轻点选点
+    canvas.addEventListener('touchstart', e => {
+      if (!mapFlat || $('mapPanel').classList.contains('hidden')) return;
+      e.preventDefault();
+      for (const t of e.changedTouches) mapTouches.set(t.identifier, { x: t.clientX, y: t.clientY });
+      if (mapTouches.size === 1){
+        const t = [...mapTouches.values()][0];
+        mapFlat.dragging = true; mapFlat.moved = 0; mapFlat.lx = t.x; mapFlat.ly = t.y;
+      } else {
+        mapFlat.dragging = false; mapFlat.pinch = null;
+      }
+    }, { passive: false });
+    canvas.addEventListener('touchmove', e => {
+      if (!mapFlat || $('mapPanel').classList.contains('hidden')) return;
+      e.preventDefault();
+      for (const t of e.changedTouches){ if (mapTouches.has(t.identifier)) mapTouches.set(t.identifier, { x: t.clientX, y: t.clientY }); }
+      const rect = canvas.getBoundingClientRect();
+      const sx = canvas.width / Math.max(1, rect.width);
+      if (mapTouches.size === 1 && mapFlat.dragging){
+        const t = [...mapTouches.values()][0];
+        const dx = (t.x - mapFlat.lx) * sx, dy = (t.y - mapFlat.ly) * sx;
+        mapFlat.lx = t.x; mapFlat.ly = t.y;
+        mapFlat.moved += Math.abs(dx) + Math.abs(dy);
+        mapFlat.cx -= dx / mapFlat.scale;
+        mapFlat.cz -= dy / mapFlat.scale;
+        mapFlat.follow = false;
+        drawFlatMap();
+      } else if (mapTouches.size === 2){
+        const [a, b] = [...mapTouches.values()];
+        const dist = Math.hypot(a.x - b.x, a.y - b.y);
+        const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+        if (!mapFlat.pinch){ mapFlat.pinch = { dist, mid }; return; }
+        const before = flatCanvasToWorld(mid.x - rect.left, mid.y - rect.top);
+        mapFlat.scale = THREE.MathUtils.clamp(mapFlat.scale * (dist / mapFlat.pinch.dist), 0.35, 3.2);
+        const after = flatCanvasToWorld(mid.x - rect.left, mid.y - rect.top);
+        mapFlat.cx += before.x - after.x;
+        mapFlat.cz += before.z - after.z;
+        mapFlat.pinch = { dist, mid };
+        mapFlat.follow = false;
+        drawFlatMap();
+      }
+    }, { passive: false });
+    const mapTouchEnd = e => {
+      if (!mapFlat) return;
+      for (const t of e.changedTouches) mapTouches.delete(t.identifier);
+      if (mapTouches.size < 2) mapFlat.pinch = null;
+      if (mapTouches.size === 0){
+        if (mapFlat.dragging && mapFlat.moved < 5 && e.changedTouches[0]){
+          flatMapClick({ clientX: e.changedTouches[0].clientX, clientY: e.changedTouches[0].clientY });
+        }
+        mapFlat.dragging = false;
+      }
+    };
+    canvas.addEventListener('touchend', mapTouchEnd);
+    canvas.addEventListener('touchcancel', mapTouchEnd);
     canvas.addEventListener('wheel', e => {
       if (!mapFlat || $('mapPanel').classList.contains('hidden')) return;
       e.preventDefault();

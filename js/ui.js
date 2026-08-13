@@ -975,7 +975,6 @@ const UI = (() => {
     else if (m.type === 'chest' || m.type === 'collector'){
       const list = document.createElement('div');
       list.className = 'warehouse-list';
-      list.style.maxHeight = '52vh';
       for (let i = 0; i < d.slots.length; i++){
         const idx = i;
         const el = document.createElement('div');
