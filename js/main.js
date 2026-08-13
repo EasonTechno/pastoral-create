@@ -4242,6 +4242,12 @@ const Game = (() => {
       $('mobileMenuToggle').classList.toggle('open', opened); $('mobileMenuToggle').setAttribute('aria-expanded', String(opened));
     };
     $('mobileMenuToggle').onclick = toggleMobileMenu;
+    // 菜单打开时点击空白区域关闭（capture 阶段先于打开事件，不会误关）
+    document.addEventListener('click', e => {
+      if ($('mobileMenuPanel').classList.contains('hidden')) return;
+      if (e.target && e.target.closest && e.target.closest('#mobileMenuPanel')) return;
+      closeMobileMenu();
+    }, true);
     const menuAction = (id, fn) => { $(id).onclick = () => { closeMobileMenu(); Sound.play('uiClick'); fn(); }; };
     menuAction('mnuInventory', () => UI.toggle('invPanel'));
     menuAction('mnuQuest', () => UI.openQuestTree());

@@ -504,9 +504,9 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
 #mobileControls{position:fixed;inset:0;z-index:60;display:none;pointer-events:none}
 #mobileControls button{font-family:var(--font-ui);cursor:pointer;touch-action:none}
 #mobileMenuDock{position:absolute;top:calc(8px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right));z-index:70;display:none;pointer-events:auto;isolation:isolate}
-#mobileMenuToggle{position:relative;z-index:3;width:40px;height:38px;padding:7px 9px;border:2px solid var(--edge);background:var(--band-face);box-shadow:var(--bevel-up),var(--px-edge-2);cursor:pointer;touch-action:manipulation}
+#mobileMenuToggle{position:relative;z-index:3;width:40px;height:38px;padding:7px 9px;border:2px solid var(--edge);background:var(--band-face);box-shadow:var(--px-edge-2);cursor:pointer;touch-action:manipulation}
 #mobileMenuToggle span{display:block;height:3px;margin:3px 0;background:var(--edge)}
-#mobileMenuToggle.open{background:var(--band-leaf)}
+#mobileMenuToggle.open{display:none}
 #mobileMenuToggle.open span{background:#fff}
 #mobileMenuPanel{position:fixed;z-index:2;top:0;right:0;width:33.333vw;min-width:280px;max-width:420px;height:100dvh;padding:calc(12px + env(safe-area-inset-top)) 12px 12px;background:var(--cream);background-image:var(--dither);border:2px solid var(--edge);border-top:0;border-right:0;box-shadow:-4px 4px 0 rgba(46,26,10,.35);overflow-y:auto}
 .mobile-menu-head{padding:0 2px 9px;color:var(--leaf-dk);font-weight:700;font-size:14px;border-bottom:2px dashed var(--frame)}
@@ -533,7 +533,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
   /* 左上角标：等距按钮 + 世界信息框 拼接，贴顶，内角圆角，外角由屏幕圆角裁切 */
   #infoCorner{top:0;left:0;width:auto}
   #infoCorner .corner-row{display:flex;align-items:stretch;pointer-events:none}
-  #mbViewMode{display:block;position:static;transform:none;width:64px;height:48px;padding:0;font-size:12px;font-weight:700;letter-spacing:1px;color:var(--ink);background:var(--band-face);border:2px solid var(--edge);border-radius:0 0 0 10px;box-shadow:var(--bevel-up),var(--px-edge-2);cursor:pointer;pointer-events:auto;font-family:var(--font-ui)}
+  #mbViewMode{display:block;position:static;transform:none;width:80px;height:48px;padding:0 12px 0 0;text-align:right;font-size:12px;font-weight:700;letter-spacing:1px;color:var(--ink);background:var(--band-face);border:2px solid var(--edge);border-radius:0 0 0 10px;box-shadow:var(--px-edge-2);cursor:pointer;pointer-events:auto;font-family:var(--font-ui)}
   #mbViewMode:active{transform:translateY(2px)}
   #worldInfo{font-size:11px;width:190px;height:48px;display:flex;align-items:center;padding:0 12px;border-left:0;border-radius:0 0 10px 0}
   #infoCorner:has(#traitBox:not(.hidden)) .corner-row>*,
@@ -542,7 +542,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
   #topRightCluster{position:absolute;top:0;right:0;z-index:70;display:flex;align-items:stretch;pointer-events:none;isolation:isolate}
   #topRightCluster>*{pointer-events:auto}
   #mobileMenuDock{position:static;display:block}
-  #mobileMenuToggle{border-radius:0 0 10px 0;width:88px;height:48px;padding:0 48px 0 20px;display:flex;flex-direction:column;justify-content:center;border-left:0}
+  #mobileMenuToggle{border-radius:0 0 10px 0;width:88px;height:48px;padding:0 48px 0 20px;display:flex;flex-direction:column;justify-content:center;border-left:0;box-shadow:var(--px-edge-2)}
   #economyHud{position:static;height:48px;max-width:38vw;border-right:0;border-radius:0 0 0 10px;padding:0 12px}
   #hotbarWrap{bottom:calc(22px + env(safe-area-inset-bottom))}
   #hotbar .hslot{width:40px;height:40px}
@@ -570,7 +570,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
   .mobile-stick{left:calc(3vw + env(safe-area-inset-left));bottom:calc(12vh + env(safe-area-inset-bottom));width:132px;height:132px}
   .mobile-stick-knob{width:56px;height:56px;margin:-28px}
   .mobile-actions{right:calc(3vw + env(safe-area-inset-right));bottom:calc(12vh + env(safe-area-inset-bottom))}
-  .mobile-action.right{width:88px;height:88px}
+  .mobile-action.right{width:88px;height:88px;box-shadow:var(--px-edge-2)}
   .mobile-gui{top:calc(38px + env(safe-area-inset-top));right:calc(5px + env(safe-area-inset-right))}
 }
 /* 移动端面板全屏（去掉切角与阴影） */
