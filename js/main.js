@@ -195,7 +195,7 @@ const Game = (() => {
   // ---------- 画面设置（ESC → 画面设置；持久化到 localStorage）----------
   const SETTINGS_KEY = 'starforge_settings';
   const mobileDevice = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
-  const settings = { fov: 75, chunkDist: mobileDevice ? 10 : 16, farDist: mobileDevice ? 768 : 1536, quality: mobileDevice ? 'high' : 'mid', planetLod: 'mid', clouds: 'on', realAtmo: 'on', npcShips: 7, camPitch: 35 };
+  const settings = { fov: 75, chunkDist: mobileDevice ? 10 : 16, farDist: mobileDevice ? 768 : 1536, quality: mobileDevice ? 'high' : 'mid', planetLod: 'mid', clouds: 'on', realAtmo: 'on', npcShips: 7, camPitch: 35, cornerInset: 0 };
   try { Object.assign(settings, JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}')); } catch(e){}
   if (mobileDevice){
     // 旧版本可能保存过低画质配置；移动端现在只降渲染面积，不降材质与特效。
@@ -4312,6 +4312,10 @@ const Game = (() => {
       $('setNpc').value = settings.npcShips;
       $('setNpcVal').textContent = settings.npcShips + ' 艘';
     }
+    if ($('setCornerInset')){
+      $('setCornerInset').value = settings.cornerInset || 0;
+      $('setCornerInsetVal').textContent = (settings.cornerInset || 0) + 'px';
+    }
     document.querySelectorAll('#setQuality button').forEach(b =>
       b.classList.toggle('on', b.dataset.q === settings.quality));
     document.querySelectorAll('#setPlanetLod button').forEach(b =>
@@ -4330,6 +4334,13 @@ const Game = (() => {
   if ($('setFov')) $('setFov').oninput = e => { settings.fov = +e.target.value; applySettings(); refreshSettingsUI(); };
   $('setChunk').oninput = e => { settings.chunkDist = +e.target.value; applySettings(); refreshSettingsUI(); };
   $('setFar').oninput = e => { settings.farDist = +e.target.value; applySettings(); refreshSettingsUI(); };
+  if ($('setCornerInset')) $('setCornerInset').oninput = e => {
+    settings.cornerInset = +e.target.value;
+    document.documentElement.style.setProperty('--corner-inset', settings.cornerInset + 'px');
+    try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch(err){}
+    refreshSettingsUI();
+  };
+  document.documentElement.style.setProperty('--corner-inset', (settings.cornerInset || 0) + 'px');
   if ($('setNpc')) $('setNpc').oninput = e => { settings.npcShips = +e.target.value; applySettings(); refreshSettingsUI(); };
   document.querySelectorAll('#setQuality button').forEach(b => {
     b.onclick = () => { Sound.play('uiClick'); settings.quality = b.dataset.q; applySettings(); refreshSettingsUI(); };

@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
 <link rel="icon" href="data:,">
 <title>发条农庄 — 田园种田工业</title>
-<link rel="stylesheet" href="css/style.css?v=pc643">
+<link rel="stylesheet" href="css/style.css?v=pc644">
 </head>
 <body>
 <canvas id="game"></canvas>
@@ -293,6 +293,11 @@
       </div>
     </div>
     <div class="set-row">
+      <span class="set-label">按键位置</span>
+      <input type="range" id="setCornerInset" min="0" max="36" step="2">
+      <span class="set-val" id="setCornerInsetVal"></span>
+    </div>
+    <div class="set-row">
       <span class="set-label">材质包</span>
       <div class="set-opts" id="setTexPack">
         <button data-q="default">Default</button>
@@ -365,7 +370,7 @@ window.addEventListener('unhandledrejection', e => {
 <script src="js/factory.js?v=pc207"></script>
 <script src="js/player.js?v=pc15"></script>
 <script src="js/ui.js?v=pc615"></script>
-<script src="js/main.js?v=pc641"></script>
+<script src="js/main.js?v=pc642"></script>
 <script src="js/cloud.js?v=pc4"></script>
 <script>
 console.log('发条农庄 · 田园种田工业');
