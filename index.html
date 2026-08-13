@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
 <link rel="icon" href="data:,">
 <title>发条农庄 — 田园种田工业</title>
-<link rel="stylesheet" href="css/style.css?v=pc638">
+<link rel="stylesheet" href="css/style.css?v=pc640">
 </head>
 <body>
 <canvas id="game"></canvas>
@@ -73,8 +73,22 @@
 
 <!-- ====== HUD ====== -->
 <div id="hud" class="hidden">
-  <div id="infoCorner"><div id="worldInfo"></div><div id="traitBox" class="hidden"></div><div id="interactHint" class="hidden"></div></div>
-  <div id="economyHud"><span class="eco-label">🪙 金币</span><span id="ecoCredits">0</span></div>
+  <div id="infoCorner">
+    <div class="corner-row"><button id="mbViewMode" class="mobile-viewmode" type="button" title="切换视角（等距 / 俯视 / 剖面）">等距</button><div id="worldInfo"></div></div>
+    <div id="traitBox" class="hidden"></div><div id="interactHint" class="hidden"></div>
+  </div>
+  <div id="topRightCluster"><div id="economyHud"><span class="eco-label">🪙 金币</span><span id="ecoCredits">0</span></div>
+  <div id="mobileMenuDock">
+    <button id="mobileMenuToggle" type="button" aria-label="打开功能菜单" aria-expanded="false"><span></span><span></span><span></span></button>
+    <div id="mobileMenuPanel" class="hidden">
+      <div class="mobile-menu-head">田园工具</div>
+      <div class="mobile-menu-actions">
+        <button id="mnuInventory">背包</button><button id="mnuQuest">任务</button><button id="mnuTech">科技</button><button id="mnuBreed">选育</button>
+        <button id="mnuEncy">图鉴</button><button id="mnuMap">地图</button><button id="mnuTrade">集市</button><button id="mnuPause">暂停</button>
+      </div>
+    </div>
+  </div>
+  </div>
   <!-- 左下：拾取通知 -->
   <div id="pickups"></div>
   <div id="bigMsg" class="hidden"></div>
@@ -84,21 +98,10 @@
     <div class="hotbar-row"><div id="hotbar"></div><button id="mbInventory" class="mobile-hotbar-btn" title="打开背包">▦</button></div>
     <div id="powerInfo"><span class="pw-ic">⚡</span><span id="powerText">0/0 kW</span></div>
   </div>
-  <button id="mbViewMode" class="mobile-viewmode" type="button" title="切换视角（等距 / 俯视 / 剖面）">等距</button>
   <div id="mobileControls" class="hidden">
     <div id="mobileStick" class="mobile-stick" aria-label="移动摇杆"><div id="mobileStickKnob" class="mobile-stick-knob"></div></div>
     <div class="mobile-actions">
       <button id="mbRightClick" class="mobile-action right" title="根据选中目标自动执行"><b>执行</b><small>使用 · 放置 · 挖掘</small></button>
-    </div>
-  </div>
-  <div id="mobileMenuDock">
-    <button id="mobileMenuToggle" type="button" aria-label="打开功能菜单" aria-expanded="false"><span></span><span></span><span></span></button>
-    <div id="mobileMenuPanel" class="hidden">
-      <div class="mobile-menu-head">田园工具</div>
-      <div class="mobile-menu-actions">
-        <button id="mnuInventory">背包</button><button id="mnuQuest">任务</button><button id="mnuTech">科技</button><button id="mnuBreed">选育</button>
-        <button id="mnuEncy">图鉴</button><button id="mnuMap">地图</button><button id="mnuTrade">集市</button><button id="mnuPause">暂停</button>
-      </div>
     </div>
   </div>
   <div id="landscapeHint" class="hidden">

@@ -530,13 +530,20 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
 @media (orientation: portrait){ #mobileControls{display:none !important} }
 @media (pointer:coarse),(max-width:900px){
   #hud{pointer-events:none}
-  #mbViewMode{display:block;position:absolute;left:50%;top:calc(30px + env(safe-area-inset-top));transform:translateX(-50%);z-index:26;padding:6px 12px;font-size:12px;font-weight:700;letter-spacing:1px;color:var(--ink);background:var(--band-face);border:2px solid var(--edge);box-shadow:var(--bevel-up),var(--px-edge-2);cursor:pointer;pointer-events:auto;font-family:var(--font-ui)}
-  #mbViewMode:active{transform:translateX(-50%) translateY(2px)}
-  #infoCorner{top:calc(22px + env(safe-area-inset-top));left:calc(22px + env(safe-area-inset-left))}
-  #worldInfo{font-size:11px;padding:6px 8px}
-  #mobileMenuDock{display:block;top:0!important;right:0!important}
-  #mobileMenuToggle{border-radius:0 0 0 6px;width:88px;height:48px;padding:0 48px 0 20px;display:flex;flex-direction:column;justify-content:center}
-  #economyHud{top:calc(22px + env(safe-area-inset-top));right:calc(96px + env(safe-area-inset-right));max-width:40vw}
+  /* 左上角标：等距按钮 + 世界信息框 拼接，贴顶，内角圆角，外角由屏幕圆角裁切 */
+  #infoCorner{top:0;left:0;width:auto}
+  #infoCorner .corner-row{display:flex;align-items:stretch;pointer-events:none}
+  #mbViewMode{display:block;position:static;transform:none;width:64px;height:48px;padding:0;font-size:12px;font-weight:700;letter-spacing:1px;color:var(--ink);background:var(--band-face);border:2px solid var(--edge);border-radius:0 0 0 10px;box-shadow:var(--bevel-up),var(--px-edge-2);cursor:pointer;pointer-events:auto;font-family:var(--font-ui)}
+  #mbViewMode:active{transform:translateY(2px)}
+  #worldInfo{font-size:11px;width:190px;height:48px;display:flex;align-items:center;padding:0 12px;border-left:0;border-radius:0 0 10px 0}
+  #infoCorner:has(#traitBox:not(.hidden)) .corner-row>*,
+  #infoCorner:has(#interactHint:not(.hidden)) .corner-row>*{border-radius:0}
+  /* 右上角标：金币框 + 菜单按钮 拼接 */
+  #topRightCluster{position:absolute;top:0;right:0;z-index:70;display:flex;align-items:stretch;pointer-events:none;isolation:isolate}
+  #topRightCluster>*{pointer-events:auto}
+  #mobileMenuDock{position:static;display:block}
+  #mobileMenuToggle{border-radius:0 0 10px 0;width:88px;height:48px;padding:0 48px 0 20px;display:flex;flex-direction:column;justify-content:center;border-left:0}
+  #economyHud{position:static;height:48px;max-width:38vw;border-right:0;border-radius:0 0 0 10px;padding:0 12px}
   #hotbarWrap{bottom:calc(22px + env(safe-area-inset-bottom))}
   #hotbar .hslot{width:40px;height:40px}
   .hslot.hand .hand-glyph{font-size:18px}
@@ -615,5 +622,5 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
 }
 @media (max-width:900px) and (orientation:portrait){
   #wsRight .craft-list{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
-  #infoCorner{top:calc(16px + env(safe-area-inset-top));left:calc(16px + env(safe-area-inset-left));width:200px}
+  #infoCorner{top:0;left:0;width:auto}
 }
