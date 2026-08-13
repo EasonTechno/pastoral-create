@@ -534,7 +534,8 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
   #mbViewMode:active{transform:translateX(-50%) translateY(2px)}
   #infoCorner{top:calc(22px + env(safe-area-inset-top));left:calc(22px + env(safe-area-inset-left))}
   #worldInfo{font-size:11px;padding:6px 8px}
-  #mobileMenuDock{display:block;top:calc(20px + env(safe-area-inset-top))!important;right:calc(32px + env(safe-area-inset-right))!important}
+  #mobileMenuDock{display:block;top:0!important;right:0!important}
+  #mobileMenuToggle{border-radius:0 0 0 6px}
   #economyHud{top:calc(22px + env(safe-area-inset-top));right:calc(84px + env(safe-area-inset-right));max-width:40vw}
   #hotbarWrap{bottom:calc(22px + env(safe-area-inset-bottom))}
   #hotbar .hslot{width:40px;height:40px}
@@ -568,7 +569,9 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
 /* 移动端面板全屏（去掉切角与阴影） */
 @media (pointer:coarse),(max-width:900px){
   .panel,.panel.wide{position:fixed;inset:0;top:auto;left:auto;transform:none;width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;clip-path:none;filter:none;box-shadow:none}
-  .panel-head{min-height:44px;padding:12px 22px}
+  .panel-head{min-height:44px;padding:12px 22px;padding-right:48px}
+  .pclose{position:absolute;top:0;right:0;width:40px;height:40px;margin-left:0;border:0;border-left:2px solid var(--edge);border-bottom:2px solid var(--edge);background:var(--band-face);box-shadow:none;border-radius:0 0 0 6px;font-size:16px;z-index:5}
+  .pclose:active{transform:translateY(2px)}
   .panel-body{height:calc(100dvh - 40px);max-height:calc(100dvh - 40px)}
 }
 /* 移动端信息密度（横屏为主） */
