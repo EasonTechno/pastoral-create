@@ -5,9 +5,8 @@
    ============================================================ */
 @font-face{
   font-family:'Maple Mono';
-  src:url('../assets/fonts/maple-mono-medium.woff') format('woff');
+  src:url('../assets/fonts/maple-mono-medium.woff2') format('woff2');
   font-weight:500;font-style:normal;font-display:swap;
-  unicode-range:U+0000-00FF,U+2000-206F,U+3000-303F,U+FF00-FFEF;
 }
 :root{
   /* 星露谷暖色 */
