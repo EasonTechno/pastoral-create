@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#6f4c24">
+<link rel="apple-touch-icon" href="assets/icons/icon-180.png">
+<link rel="icon" href="data:,">
+<title>发条农庄 — 田园种田工业</title>
+<link rel="stylesheet" href="css/style.css?v=pc616">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- ====== 启动界面 ====== -->
+<div id="boot" class="screen">
+  <div class="boot-veil"></div>
+  <div class="boot-inner">
+    <div class="boot-logo">
+      <img class="boot-icon-img" src="assets/icons/game-icon.png?v=1" alt="发条农庄">
+      <h1>Pastoral Create</h1>
+      <h2>发 条 农 庄</h2>
+      <div class="boot-sub">种田 · 灌溉 · 传送带 · 自动化农场</div>
+    </div>
+    <div class="boot-menu" id="bootMenu">
+      <button id="btnNew" class="boot-btn">▶ 开始新档</button>
+  <button id="btnContinue" class="boot-btn" disabled>↻ 继续游戏</button>
+  <button id="btnAccount" class="boot-btn">♙ 云端账号</button>
+      <button id="btnSettingsBoot" class="boot-btn">⚙ 画面设置</button>
+      <button id="btnHelp" class="boot-btn">? 操作指南</button>
+    </div>
+    <div class="boot-tip" id="bootTip">「锄头翻开泥土，种子落进耕地，日子就有了盼头。」</div>
+  </div>
+  <div class="scanline"></div>
+</div>
+
+<!-- ====== 加载界面 ====== -->
+<div id="loading" class="screen hidden">
+  <div class="load-box">
+    <div class="load-title" id="loadTitle">正在生成田野…</div>
+    <div class="load-bar"><div class="load-fill" id="loadFill"></div></div>
+    <div class="load-flavor" id="loadFlavor">铺设体素地层</div>
+  </div>
+</div>
+
+<!-- ====== 帮助 ====== -->
+<div id="helpPanel" class="panel hidden">
+  <div class="panel-head"><span>◈ 操作指南</span><button class="pclose" data-close="helpPanel">✕</button></div>
+  <div class="panel-body help-body">
+    <div class="help-col"><h3>相机与视野</h3>
+      <p><b>W A S D</b> 平移相机</p>
+      <p><b>滚轮</b> 缩放 · <b>Q / E</b> 等距视角旋转</p>
+      <p><b>V</b> 切换 等距 / 俯视 / 泰拉剖面</p>
+      <p>等距/俯视按 <b>↑↓</b> 虚化高处方块 · 泰拉视图 <b>↑↓</b> 切面 <b>←→</b> 朝向</p></div>
+    <div class="help-col"><h3>种田</h3>
+      <p><b>右键</b> 使用手持物：锄头耕地、洒水壶浇水、种子播种、方块放置</p>
+      <p><b>左键+锄头</b> 收割作物 · <b>左键+铲子</b> 挖掘方块</p>
+      <p>作物带随机词条，留下喜欢的种子继续种</p>
+      <p><b>Tab</b> 背包与合成 · <b>T</b> 科技树</p></div>
+    <div class="help-col"><h3>工业与自动化</h3>
+      <p>采矿机放在矿脉上 · 传送带自动转弯/爬坡</p>
+      <p>电力：火力(烧煤)→太阳能/风力→核反应堆</p>
+      <p>灌溉机、播种机、收割机覆盖 5×5 耕地</p>
+      <p>收割产物自动送进面前的传送带/机器</p>
+      <p><b>R</b> 查看配方 · <b>U</b> 查看用途</p>
+      <p><b>F5</b> 快速存档 · <b>Esc</b> 菜单</p></div>
+  </div>
+</div>
+
+<!-- ====== HUD ====== -->
+<div id="hud" class="hidden">
+  <div id="infoCorner"><div id="worldInfo"></div><div id="traitBox" class="hidden"></div><div id="interactHint" class="hidden"></div></div>
+  <div id="economyHud"><span class="eco-label">🪙 金币</span><span id="ecoCredits">0</span></div>
+  <!-- 左下：拾取通知 -->
+  <div id="pickups"></div>
+  <div id="bigMsg" class="hidden"></div>
+  <!-- 底部快捷栏 -->
+  <div id="hotbarWrap">
+    <div id="itemLabel"></div>
+    <div class="hotbar-row"><div id="hotbar"></div><button id="mbInventory" class="mobile-hotbar-btn" title="打开背包">▦</button></div>
+    <div id="powerInfo"><span class="pw-ic">⚡</span><span id="powerText">0/0 kW</span></div>
+  </div>
+  <button id="mbViewMode" class="mobile-viewmode" type="button" title="切换视角（等距 / 俯视 / 剖面）">等距</button>
+  <div id="mobileControls" class="hidden">
+    <div id="mobileStick" class="mobile-stick" aria-label="移动摇杆"><div id="mobileStickKnob" class="mobile-stick-knob"></div></div>
+    <div class="mobile-actions">
+      <button id="mbRightClick" class="mobile-action right" title="根据选中目标自动执行"><b>执行</b><small>使用 · 放置 · 挖掘</small></button>
+    </div>
+  </div>
+  <div id="mobileMenuDock">
+    <button id="mobileMenuToggle" type="button" aria-label="打开功能菜单" aria-expanded="false"><span></span><span></span><span></span></button>
+    <div id="mobileMenuPanel" class="hidden">
+      <div class="mobile-menu-head">田园工具</div>
+      <div class="mobile-menu-actions">
+        <button id="mnuInventory">背包</button><button id="mnuQuest">任务</button><button id="mnuTech">科技</button><button id="mnuBreed">选育</button>
+        <button id="mnuEncy">图鉴</button><button id="mnuMap">地图</button><button id="mnuTrade">集市</button><button id="mnuPause">暂停</button>
+      </div>
+    </div>
+  </div>
+  <div id="landscapeHint" class="hidden">
+    <div class="lh-inner"><div class="lh-phone"></div><div>请横屏游玩</div></div>
+  </div>
+</div>
+
+
+<div id="questTreePanel" class="panel hidden wide">
+  <div class="panel-head"><span>✦ 主线任务树</span><span class="head-info" id="questTreeProgress"></span><button class="pclose" data-close="questTreePanel">✕</button></div>
+  <div class="panel-body quest-tree-body"><div class="quest-tree-legend">已完成 · 进行中 · 未解锁</div><div id="questTree"></div></div>
+</div>
+
+<!-- ====== 作物选育 ====== -->
+<div id="breedingPanel" class="panel hidden">
+  <div class="panel-head"><span>✿ 种子工坊 · 选育</span><span class="head-info">让喜欢的性状留下来</span><button class="pclose" data-close="breedingPanel">✕</button></div>
+  <div class="panel-body breeding-body">
+    <div class="breeding-intro">每枚种子固定有两个显隐基因槽。选一枚可克隆，选两枚同作物种子可杂交；子代从父母各随机继承一个基因。</div>
+    <div class="breeding-slots"><div class="parent-card"><b>亲本 A</b><div id="breedParentA" class="breed-parent">点击下方种子</div></div><div class="breed-heart">×</div><div class="parent-card"><b>亲本 B</b><div id="breedParentB" class="breed-parent">点击下方种子</div></div></div>
+    <div id="breedResult" class="breed-result">选好两枚亲本后开始选育</div>
+    <button id="breedSubmit" class="boot-btn small" disabled>开始选育</button>
+    <div class="inv-sec">可用种子（带彩色标记的是优良种子）</div>
+    <div id="breedSeedList" class="breed-seeds"></div>
+  </div>
+</div>
+
+<!-- ====== 背包 / 合成 ====== -->
+<div id="invPanel" class="panel hidden">
+  <div class="panel-head"><span id="wsTitle">◈ 田园工作台</span><span id="inventorySummary" class="head-info"></span><button class="pclose" data-close="invPanel">✕</button></div>
+  <div class="panel-body inv-body">
+    <div class="inv-left">
+      <div class="inventory-toolbar"><div><b>随身工具栏</b><small>拖入 8 个常用物品</small></div><span id="warehouseUsed"></span></div>
+      <div id="invHotRow" class="slot-grid"></div>
+      <div class="warehouse-head"><b>仓库物资</b><span>点按取放 · 拖拽装填</span></div>
+      <div id="invGrid" class="warehouse-list"></div>
+      <div class="inv-bottom">
+        <div id="trashSlot" title="回收站：手持物品点击销毁（右键销毁1个）">🗑</div>
+        <div id="invHint" class="inv-hint">点一次查看 · 再点同格拿起 · 点其他格移动 · 拖拽自由放置</div>
+      </div>
+    </div>
+    <div class="inv-right">
+      <div id="wsRight"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 机器面板 ====== -->
+<div id="machinePanel" class="panel hidden">
+  <div class="panel-head"><span id="machineTitle">◈ 机器</span><button class="pclose" data-close="machinePanel">✕</button></div>
+  <div class="panel-body" id="machineBody"></div>
+</div>
+
+<!-- ====== 科技树 ====== -->
+<div id="techPanel" class="panel hidden wide">
+  <div class="panel-head"><span>◈ 田园科技</span><span id="dataCount" class="head-info"></span><button class="pclose" data-close="techPanel">✕</button></div>
+  <div class="panel-body tech-body"><div id="techCanvasWrap"><svg id="techLines"></svg><div id="techNodes"></div></div></div>
+</div>
+
+<!-- ====== 田园图鉴（JEI 式） ====== -->
+<div id="encyPanel" class="panel hidden wide">
+  <div class="panel-head"><span>◈ 田园图鉴</span><span class="head-info" id="encyCrumb"></span>
+    <button id="encyBack" class="boot-btn small hidden" style="margin-right:6px">← 返回</button>
+    <button class="pclose" data-close="encyPanel">✕</button></div>
+  <div class="panel-body ency-body">
+    <div class="ency-top">
+      <input type="text" id="encySearch" placeholder="搜索物品…" maxlength="20">
+      <span class="ency-hint">R 配方 · U 用途 · 左键查看</span>
+      <button id="recipeTreeBtn" class="boot-btn small">合成树</button>
+    </div>
+    <div id="encyView"></div>
+  </div>
+</div>
+
+<!-- ====== 田园集市 ====== -->
+<div id="tradePanel" class="panel hidden wide">
+  <div class="panel-head"><span id="tradeTitle">◈ 田园集市</span><span class="head-info">🪙 <span id="tradeCredits">0</span></span><button class="pclose" data-close="tradePanel">✕</button></div>
+  <div class="panel-body trade-body">
+    <div class="trade-col"><h3>市场行情</h3><div id="tradeList"></div></div>
+    <div class="trade-col"><h3>种子与建材</h3><div id="bpList"></div></div>
+  </div>
+</div>
+
+<!-- ====== 星球地图 ====== -->
+<div id="mapPanel" class="panel hidden wide">
+  <div class="panel-head"><span>◈ 田野地图</span><span class="head-info" id="mapInfo"></span><button class="pclose" data-close="mapPanel">✕</button></div>
+  <div class="panel-body map-body">
+    <div id="mapView"><canvas id="mapCanvas" width="640" height="470"></canvas><div id="mapTip" class="hidden"></div></div>
+    <div id="mapSide">
+      <div class="map-hint">🖱 拖拽查看田野 · 点击地面添加标记</div>
+      <div id="mapAddForm" class="hidden">
+        <div class="map-form-title" id="mapAddPos"></div>
+        <input type="text" id="mapMarkName" placeholder="标记名称（回车确认）" maxlength="12">
+        <button id="mapAddBtn" class="boot-btn small">＋ 添加标记</button>
+      </div>
+      <div class="map-sec">已有标记</div>
+      <div id="mapMarkList"></div>
+      <div class="map-legend2"><span style="color:#7dff8a">●</span> 我 · <span style="color:#35e0e8">●</span> 机器 · <span style="color:#ffd94d">●</span> 标记</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 存档管理 ====== -->
+<div id="savePanel" class="panel hidden">
+  <div class="panel-head"><span id="saveTitle">◈ 档案管理</span><button class="pclose" data-close="savePanel">✕</button></div>
+  <div class="panel-body">
+    <div id="saveList"></div>
+    <button id="btnNewSave" class="boot-btn small" style="margin-top:10px">＋ 新建存档</button>
+  </div>
+</div>
+
+<div id="accountPanel" class="panel hidden">
+  <div class="panel-head"><span>♙ 田园云端账号</span><button class="pclose" data-close="accountPanel">✕</button></div>
+  <div class="panel-body account-body">
+    <div class="account-columns"><div class="account-main"><div id="accountState" class="account-state">未登录。登录后可在手机、电脑间同步存档。</div>
+      <div id="accountForm">
+        <input id="accountName" class="account-input" placeholder="用户名（3-24位）" maxlength="24" autocomplete="username">
+        <input id="accountPassword" class="account-input" placeholder="密码（至少6位）" type="password" maxlength="72" autocomplete="current-password">
+        <div class="account-actions"><button id="btnLogin" class="boot-btn small">登录</button><button id="btnRegister" class="boot-btn small">注册并登录</button></div>
+      </div>
+      <div id="accountLogged" class="hidden"><button id="btnCloudRefresh" class="boot-btn small">刷新云存档</button><button id="btnLogout" class="boot-btn small">退出账号</button><div id="cloudSaveList" class="cloud-save-list"></div></div>
+    </div><aside id="accountProfile" class="account-profile"><h3>田园档案</h3><div class="profile-empty">登录后显示你的旅程</div></aside></div>
+  </div>
+</div>
+
+
+<!-- ====== 暂停菜单 ====== -->
+<div id="pausePanel" class="panel hidden">
+  <div class="panel-head"><span>◈ 系统菜单</span></div>
+  <div class="panel-body pause-body">
+    <button class="boot-btn" id="btnResume">继续游戏</button>
+    <button class="boot-btn" id="btnSave">存档</button>
+    <button class="boot-btn" id="btnSettings">画面设置</button>
+    <button class="boot-btn" id="btnHelp2">操作指南</button>
+    <button class="boot-btn" id="btnQuit">返回主菜单</button>
+    <div class="pause-vol">音量 <input type="range" id="volSlider" min="0" max="100" value="70"></div>
+  </div>
+</div>
+
+<!-- ====== 画面设置 ====== -->
+<div id="settingsPanel" class="panel hidden">
+  <div class="panel-head"><span>◈ 画面设置</span><button class="pclose" data-close="settingsPanel">✕</button></div>
+  <div class="panel-body settings-body">
+    <div class="set-row">
+      <span class="set-label">区块渲染距离</span>
+      <input type="range" id="setChunk" min="6" max="33" step="1">
+      <span class="set-val" id="setChunkVal"></span>
+    </div>
+    <div class="set-row">
+      <span class="set-label">区块细节</span>
+      <div class="set-opts" id="setPlanetLod">
+        <button data-q="low">低</button>
+        <button data-q="mid">标准</button>
+        <button data-q="high">高</button>
+        <button data-q="ultra">极高</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">可视距离</span>
+      <input type="range" id="setFar" min="400" max="1536" step="64">
+      <span class="set-val" id="setFarVal"></span>
+    </div>
+    <div class="set-row">
+      <span class="set-label">画质</span>
+      <div class="set-opts" id="setQuality">
+        <button data-q="low">流畅</button>
+        <button data-q="mid">标准</button>
+        <button data-q="high">高画质</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">体积云</span>
+      <div class="set-opts" id="setClouds">
+        <button data-q="on">开启</button>
+        <button data-q="off">关闭</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">逼真大气层</span>
+      <div class="set-opts" id="setRealAtmo">
+        <button data-q="on">开启</button>
+        <button data-q="off">关闭</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">相机角度</span>
+      <div class="set-opts" id="setCamPitch">
+        <button data-q="35">35°</button>
+        <button data-q="45">45°</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">材质包</span>
+      <div class="set-opts" id="setTexPack">
+        <button data-q="default">Default</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">物品图标</span>
+      <div class="set-opts" id="setItemPack">
+        <button data-q="default">Default</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">导入材质包</span>
+      <div class="set-opts import-opts">
+        <button id="btnImportZip">导入 ZIP</button>
+        <button id="btnImportDir">导入文件夹</button>
+      </div>
+    </div>
+    <div class="set-hint">导入后按文件名自动匹配方块与物品，未匹配项继续使用 Default 兜底。当前默认材质为 PureEdge 方块 + Whimscape 物品图标。</div>
+    <div class="set-hint" id="setHint">高画质（MC 光影风格）：全分辨率 + 实时阳光阴影 + 电影级调色 · 区块渲染距离拉到头 = 无限 · 低配设备建议「流畅」</div>
+    <div class="set-row beian-row">
+      <span class="set-label">备案</span>
+      <div class="set-opts"><a class="beian-link" href="https://beian.miit.gov.cn" target="_blank" rel="noopener">津ICP备2026009138号</a></div>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="importPackZip" accept=".zip" style="display:none">
+<input type="file" id="importPackDir" webkitdirectory multiple style="display:none">
+
+<!-- RPG 对话框 -->
+<div id="dialogBox" class="hidden">
+  <div class="dlg-name" id="dlgName"></div>
+  <div class="dlg-text" id="dlgText"></div>
+  <div class="dlg-next" id="dlgNext">▼ <b>E</b> 继续</div>
+</div>
+
+<!-- 转场遮罩 -->
+<div id="fader"></div>
+<div id="reentryFx"></div>
+<div id="atmoTint"></div>
+<div id="tooltip" class="hidden"></div>
+<div id="dragGhost" class="hidden"></div>
+<div id="vignette"></div>
+<div id="damageFlash"></div>
+
+<script>
+window.addEventListener('error', e => {
+  console.error('[GAME ERROR]', e.message, e.filename, e.lineno);
+  let el = document.getElementById('errOverlay');
+  if (!el){
+    el = document.createElement('div');
+    el.id = 'errOverlay';
+    el.style.cssText = 'position:fixed;left:10px;bottom:10px;z-index:9999;background:#300a;color:#f88;font:12px Consolas;padding:8px;max-width:90vw;white-space:pre-wrap';
+    document.body.appendChild(el);
+  }
+  el.textContent += `⚠ ${e.message}\n   ${e.filename}:${e.lineno}\n`;
+});
+window.addEventListener('unhandledrejection', e => {
+  console.error('[GAME PROMISE ERROR]', e.reason && (e.reason.stack || e.reason.message || e.reason));
+});
+</script>
+<script src="js/three.min.js?v=st85"></script>
+<script src="js/SVGLoader.js?v=st85"></script>
+<script src="js/textures.js?v=pc12"></script>
+<script src="js/audio.js?v=st85"></script>
+<script src="js/data.js?v=pc14"></script>
+<script src="js/farm.js?v=pc7"></script>
+<script src="js/world.js?v=pc30"></script>
+<script src="js/factory.js?v=pc207"></script>
+<script src="js/player.js?v=pc15"></script>
+<script src="js/ui.js?v=pc613"></script>
+<script src="js/main.js?v=pc613"></script>
+<script src="js/cloud.js?v=pc4"></script>
+<script>
+console.log('发条农庄 · 田园种田工业');
+</script>
+<script>
+/* PWA 注册：失败静默回退，绝不影响游戏启动（不等 load，立即注册） */
+(function(){
+  if (!('serviceWorker' in navigator)) return;
+  if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
+  navigator.serviceWorker.register('sw.js').catch(function(){});
+})();
+</script>
+</body>
+</html>

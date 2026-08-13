@@ -1,0 +1,17 @@
+# Local editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local runtime output
+*.log
+tool-output/
+
+# Local deployment and generated files
+.env
+.env.*
+assets/home-background.png
+
+# Browser-generated project data should never be committed
+*.local

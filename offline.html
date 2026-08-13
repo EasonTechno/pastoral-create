@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#6f4c24">
+<title>发条农庄 · 离线占位</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:linear-gradient(180deg,#0c1730,#05070d 70%);color:#c9e6ee;font-family:'Segoe UI',system-ui,sans-serif;display:flex;align-items:center;justify-content:center}
+  .card{width:min(420px,88vw);padding:28px 24px;background:linear-gradient(180deg,#f8efd8,#dfc28e);border:4px solid #6f4c24;box-shadow:inset 0 0 0 3px #3a2818,0 10px 40px #000a;color:#3a2d1d;text-align:center}
+  .card h1{color:#4f7a2a;font-size:20px;letter-spacing:2px;margin-bottom:12px}
+  .card p{font-size:13px;line-height:1.8;color:#6d5438}
+  .card button{margin-top:18px;padding:10px 22px;border:3px solid #3f5a22;background:linear-gradient(180deg,#8fae4d,#5e8b3f);color:#fff;font-size:14px;letter-spacing:2px;cursor:pointer;box-shadow:inset 0 2px 0 #b4d073,0 3px 0 #2f4520}
+  .card button:active{transform:translateY(2px)}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>发条农庄 · 离线占位</h1>
+    <p>当前没有网络连接，无法载入游戏。<br>请检查网络后重试，或稍后再来。</p>
+    <button onclick="location.reload()">重试</button>
+  </div>
+</body>
+</html>
