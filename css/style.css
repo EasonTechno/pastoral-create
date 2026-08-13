@@ -533,17 +533,17 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
   /* 左上角标：等距按钮 + 世界信息框 拼接，贴顶，内角圆角，外角由屏幕圆角裁切 */
   #infoCorner{top:0;left:0;width:auto}
   #infoCorner .corner-row{display:flex;align-items:stretch;pointer-events:none}
-  #mbViewMode{display:block;position:static;transform:none;width:80px;height:48px;padding:0 12px 0 0;text-align:right;font-size:12px;font-weight:700;letter-spacing:1px;color:var(--ink);background:var(--band-face);border:2px solid var(--edge);border-radius:0 0 0 10px;box-shadow:var(--px-edge-2);cursor:pointer;pointer-events:auto;font-family:var(--font-ui)}
+  #mbViewMode{display:block;position:static;transform:none;width:80px;height:48px;padding:0 12px 0 0;text-align:right;font-size:12px;font-weight:700;letter-spacing:1px;color:var(--ink);background:var(--band-face);border:2px solid var(--edge);border-radius:24px 0 0 24px;box-shadow:var(--px-edge-2);cursor:pointer;pointer-events:auto;font-family:var(--font-ui)}
   #mbViewMode:active{transform:translateY(2px)}
-  #worldInfo{font-size:11px;width:190px;height:48px;display:flex;align-items:center;padding:0 12px;border-left:0;border-radius:0 0 10px 0}
+  #worldInfo{font-size:11px;width:190px;height:48px;display:flex;align-items:center;padding:0 14px;border-left:0;border-radius:0 24px 24px 0}
   #infoCorner:has(#traitBox:not(.hidden)) .corner-row>*,
   #infoCorner:has(#interactHint:not(.hidden)) .corner-row>*{border-radius:0}
   /* 右上角标：金币框 + 菜单按钮 拼接 */
   #topRightCluster{position:absolute;top:0;right:0;z-index:70;display:flex;align-items:stretch;pointer-events:none;isolation:isolate}
   #topRightCluster>*{pointer-events:auto}
   #mobileMenuDock{position:static;display:block}
-  #mobileMenuToggle{border-radius:0 0 10px 0;width:88px;height:48px;padding:0 48px 0 20px;display:flex;flex-direction:column;justify-content:center;border-left:0;box-shadow:var(--px-edge-2)}
-  #economyHud{position:static;height:48px;max-width:38vw;border-right:0;border-radius:0 0 0 10px;padding:0 12px}
+  #mobileMenuToggle{border-radius:0 24px 24px 0;width:88px;height:48px;padding:0 48px 0 20px;display:flex;flex-direction:column;justify-content:center;border-left:0;box-shadow:var(--px-edge-2)}
+  #economyHud{position:static;height:48px;max-width:38vw;border-right:0;border-radius:24px 0 0 24px;padding:0 14px}
   #hotbarWrap{bottom:calc(22px + env(safe-area-inset-bottom))}
   #hotbar .hslot{width:40px;height:40px}
   .hslot.hand .hand-glyph{font-size:18px}
@@ -577,7 +577,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
 @media (pointer:coarse),(max-width:900px){
   .panel,.panel.wide{position:fixed;inset:0;top:auto;left:auto;transform:none;width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;clip-path:none;filter:none;box-shadow:none}
   .panel-head{min-height:48px;padding:12px 22px;padding-right:88px}
-  .pclose{position:absolute;top:0;right:0;width:80px;height:48px;margin-left:0;border:0;border-left:2px solid var(--edge);border-bottom:2px solid var(--edge);background:var(--band-face);box-shadow:none;border-radius:0 0 0 6px;font-size:16px;z-index:5;display:flex;align-items:center;justify-content:flex-start;padding-left:24px}
+  .pclose{position:absolute;top:0;right:0;width:80px;height:48px;margin-left:0;border:0;border-left:2px solid var(--edge);border-bottom:2px solid var(--edge);background:var(--band-face);box-shadow:none;border-radius:0 0 24px 24px;font-size:16px;z-index:5;display:flex;align-items:center;justify-content:flex-start;padding-left:24px}
   .pclose:active{transform:translateY(2px)}
   .panel-body{height:calc(100dvh - 48px);max-height:calc(100dvh - 48px)}
 }
