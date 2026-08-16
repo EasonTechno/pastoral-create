@@ -400,11 +400,12 @@ const Factory = (() => {
       case 'filter': return { list: null, out: null };   // list=null 全部放行
       case 'chute': return { buffer: null };
       case 'battery': return { store: 0 };
+      case 'boiler': return { fuel: null, burn: 0, burnMax: 0 };
       default: return {};
     }
   }
   const POWER_USE = { miner: 8, assembler: 12, refinery: 20, irrigator: 6, planter: 8, harvester: 10, sellbot: 2, vendor: 4 };
-  const POWER_GEN = { solar: 10, reactor: 100, burner: 25 };
+  const POWER_GEN = { solar: 10, reactor: 100, burner: 25, boiler: 50 };
   const BATTERY_CAP = 400;   // 单格储能电池容量（kW·s）
   const BATTERY_RATE = 60;   // 充/放电速率（kW）
 
@@ -464,7 +465,7 @@ const Factory = (() => {
       }
       case 'belt': return beltCanAccept(m, 0);
       case 'reactor': return item === 'uranium' && m.data.fuel < 300;
-      case 'burner': return !!FUEL_VALUE[item] && (!m.data.fuel || (m.data.fuel.item === item && m.data.fuel.n < 50));
+      case 'burner': case 'boiler': return !!FUEL_VALUE[item] && (!m.data.fuel || (m.data.fuel.item === item && m.data.fuel.n < 50));
       case 'planter': {
         const crop = Object.values(CROPS).find(c => c.seed === item);
         if (!crop) return false;
@@ -518,7 +519,7 @@ const Factory = (() => {
         return true;
       case 'belt': return beltInsert(m, item, 0);
       case 'reactor': m.data.fuel += 60; return true;
-      case 'burner':
+      case 'burner': case 'boiler':
         if (!m.data.fuel) m.data.fuel = { item, n: 0 };
         m.data.fuel.n++;
         return true;
@@ -1061,6 +1062,17 @@ const Factory = (() => {
           if (d.fuel.n <= 0) d.fuel = null;
         }
         if (d.burn > 0){ d.burn -= dt; gen += POWER_GEN.burner; m.active = true; }
+        else m.active = false;
+      }
+      if (m.type === 'boiler'){
+        const d = m.data;
+        if (d.burn <= 0 && d.fuel && d.fuel.n > 0){
+          d.burn = (FUEL_VALUE[d.fuel.item] || 4) * 2.5;   // 燃料利用率更高
+          d.burnMax = d.burn;
+          d.fuel.n--;
+          if (d.fuel.n <= 0) d.fuel = null;
+        }
+        if (d.burn > 0){ d.burn -= dt; gen += POWER_GEN.boiler; m.active = true; }
         else m.active = false;
       }
       if (m.type === 'reactor' && m.data.fuel > 0){ gen += POWER_GEN.reactor; m.data.fuel -= dt; m.active = true; }

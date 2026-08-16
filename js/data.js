@@ -77,6 +77,7 @@ const BLOCKS = {
   cable_spool:{ id: 74, name: '电缆卷', hard: 1.0, tiles: { all: 'copper_block' }, drops: [{ item: 'cable_spool_b', n: 1 }] },
   light_panel:{ id: 75, name: '工业灯板', hard: 0.8, tiles: { all: 'lamp_on' }, glow: true, drops: [{ item: 'light_panel_b', n: 1 }] },
   battery:  { id: 76, name: '储能电池', hard: 1.6, machine: 'battery', tiles: { all: 'metal', top: 'vent' }, drops: [{ item: 'battery_b', n: 1 }] },
+  boiler:   { id: 77, name: '高效锅炉', hard: 1.6, machine: 'boiler', tiles: { all: 'metal_dark', front: 'furnace_front' }, drops: [{ item: 'boiler_b', n: 1 }] },
 };
 const BLOCK_BY_ID = {};
 for (const k in BLOCKS){ BLOCKS[k].key = k; BLOCK_BY_ID[BLOCKS[k].id] = BLOCKS[k]; if (BLOCKS[k].solid === undefined) BLOCKS[k].solid = true; }
@@ -158,6 +159,7 @@ const ITEMS = {
   cable_spool_b:{ name: '电缆卷', cat: 'blk', iconBlock: 'cable_spool', block: 'cable_spool', stack: 250, desc: '铜电缆卷起的工业建材。', price: 14 },
   light_panel_b:{ name: '工业灯板', cat: 'blk', iconBlock: 'light_panel', block: 'light_panel', stack: 100, desc: '发光的工业面板，照亮夜班。', price: 26 },
   battery_b:   { name: '储能电池', cat: 'mach', iconBlock: 'battery', block: 'battery', stack: 20, desc: '储存富余电力，缺电时释放，稳定电网。', price: 1400 },
+  boiler_b:    { name: '高效锅炉', cat: 'mach', iconBlock: 'boiler', block: 'boiler', stack: 20, desc: '50kW 锅炉，燃料利用率更高（燃烧时间×2.5）。', price: 900 },
 };
 for (const k in ITEMS){ ITEMS[k].id = k; if (!ITEMS[k].stack) ITEMS[k].stack = 250; }
 
@@ -293,6 +295,7 @@ const RECIPES = [
   { id: 'cable_spool_b',out: { cable_spool_b: 3 },in: { copper: 6, wire: 1 },                where: 'both', time: 2.5 },
   { id: 'light_panel_b',out: { light_panel_b: 2 },in: { glass_b: 2, lamp_b: 1, wire: 2 },    where: 'both', time: 3.0 },
   { id: 'battery_b',    out: { battery_b: 1 },    in: { iron: 12, copper: 4, circuit: 2, plate: 1 }, where: 'both', time: 8.0, tech: 'power' },
+  { id: 'boiler_b',     out: { boiler_b: 1 },     in: { iron: 10, gear: 2, circuit: 1, stone: 4 }, where: 'both', time: 6.0, tech: 'power' },
 ];
 const RECIPE_BY_ID = {}; RECIPES.forEach(r => RECIPE_BY_ID[r.id] = r);
 
@@ -371,7 +374,7 @@ BIOMES.redmoss.animal = { body: 0xc25a48, legs: 0x8a3a2c, eye: 0xffe8a0, count: 
 BIOMES.hive.animal    = { body: 0xd8862a, legs: 0x8a5210, eye: 0x1a1a1a, count: 10, name: '蜂窝守卫', type: 'strider' };
 
 // ================= 商品交易表 =================
-const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed','vent_pipe_b','cable_spool_b','light_panel_b','battery_b'];
+const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed','vent_pipe_b','cable_spool_b','light_panel_b','battery_b','boiler_b'];
 
 // ================= 任务线 =================
 // type: collect(拥有n个) / place / tech / farm(农田行为计数)
