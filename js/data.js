@@ -102,6 +102,7 @@ const BLOCKS = {
   chest_tower:{ id: 99, name: '大型仓储塔', hard: 1.8, machine: 'chest', slots: 64, tiles: { all: 'metal', top: 'vent' }, drops: [{ item: 'chest_tower_b', n: 1 }] },
   industrial_floor:{ id: 100, name: '工业地台', hard: 1.4, tiles: { all: 'metal' }, drops: [{ item: 'industrial_floor_b', n: 1 }] },
   industrial_glass:{ id: 101, name: '钢化玻璃', hard: 0.8, tiles: { all: 'glass' }, transparent: true, drops: [{ item: 'industrial_glass_b', n: 1 }] },
+  chute_tower:{ id: 102, name: '大型向漏斗', hard: 1.2, machine: 'chute', bufferCap: 500, tiles: { all: 'metal_dark', top: 'storage_top' }, drops: [{ item: 'chute_tower_b', n: 1 }] },
 };
 const BLOCK_BY_ID = {};
 for (const k in BLOCKS){ BLOCKS[k].key = k; BLOCK_BY_ID[BLOCKS[k].id] = BLOCKS[k]; if (BLOCKS[k].solid === undefined) BLOCKS[k].solid = true; }
@@ -208,6 +209,7 @@ const ITEMS = {
   chest_tower_b:   { name: '大型仓储塔', cat: 'mach', iconBlock: 'chest_tower', block: 'chest_tower', stack: 20, desc: '64 格大型仓储塔。', price: 360 },
   industrial_floor_b:{ name: '工业地台', cat: 'blk', iconBlock: 'industrial_floor', block: 'industrial_floor', stack: 250, desc: '金属工业地面。', price: 12 },
   industrial_glass_b:{ name: '钢化玻璃', cat: 'blk', iconBlock: 'industrial_glass', block: 'industrial_glass', stack: 250, desc: '透明工业玻璃。', price: 14 },
+  chute_tower_b:   { name: '大型向漏斗', cat: 'mach', iconBlock: 'chute_tower', block: 'chute_tower', stack: 20, desc: '暂存上限更大的向漏斗。', price: 180 },
 };
 for (const k in ITEMS){ ITEMS[k].id = k; if (!ITEMS[k].stack) ITEMS[k].stack = 250; }
 
@@ -368,6 +370,7 @@ const RECIPES = [
   { id: 'chest_tower_b', out: { chest_tower_b: 1 }, in: { storage_vault_b: 1, iron: 8, plate: 2 }, where: 'both', time: 6.0, tech: 'assembly' },
   { id: 'industrial_floor_b', out: { industrial_floor_b: 6 }, in: { metal_frame_b: 2 }, where: 'both', time: 1.2 },
   { id: 'industrial_glass_b', out: { industrial_glass_b: 4 }, in: { glass_b: 2, iron: 1 }, where: 'both', time: 1.5 },
+  { id: 'chute_tower_b', out: { chute_tower_b: 1 }, in: { chute_b: 1, iron: 4, planks_b: 2 }, where: 'both', time: 3.0, tech: 'automation' },
 ];
 const RECIPE_BY_ID = {}; RECIPES.forEach(r => RECIPE_BY_ID[r.id] = r);
 
@@ -446,7 +449,7 @@ BIOMES.redmoss.animal = { body: 0xc25a48, legs: 0x8a3a2c, eye: 0xffe8a0, count: 
 BIOMES.hive.animal    = { body: 0xd8862a, legs: 0x8a5210, eye: 0x1a1a1a, count: 10, name: '蜂窝守卫', type: 'strider' };
 
 // ================= 商品交易表 =================
-const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed','vent_pipe_b','cable_spool_b','light_panel_b','battery_b','boiler_b','fast_belt_b','storage_vault_b','compressor_b','compact_stone','solar_farm_b','wind_tower_b','deep_miner_b','refinery_tower_b','assembler_tower_b','reactor_tower_b','irrigator_tower_b','harvester_tower_b','planter_tower_b','collector_tower_b','furnace_tower_b','metal_frame_b','industrial_pipe_b','warning_stripe_b','burner_tower_b','trade_tower_b','vendor_tower_b','chest_tower_b','industrial_floor_b','industrial_glass_b'];
+const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed','vent_pipe_b','cable_spool_b','light_panel_b','battery_b','boiler_b','fast_belt_b','storage_vault_b','compressor_b','compact_stone','solar_farm_b','wind_tower_b','deep_miner_b','refinery_tower_b','assembler_tower_b','reactor_tower_b','irrigator_tower_b','harvester_tower_b','planter_tower_b','collector_tower_b','furnace_tower_b','metal_frame_b','industrial_pipe_b','warning_stripe_b','burner_tower_b','trade_tower_b','vendor_tower_b','chest_tower_b','industrial_floor_b','industrial_glass_b','chute_tower_b'];
 
 // ================= 任务线 =================
 // type: collect(拥有n个) / place / tech / farm(农田行为计数)

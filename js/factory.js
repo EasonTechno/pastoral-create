@@ -416,7 +416,7 @@ const Factory = (() => {
     const data = machineData(def.machine);
     if ((def.machine === 'chest' || def.machine === 'collector') && def.slots) data.slots = new Array(def.slots).fill(null);
     const m = {
-      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, genMul: def.genMul || 1, minerSpeed: def.minerSpeed || 1, fuelCap: def.fuelCap || 300, range: def.range || 2, fuelMul: def.fuelMul || 1, priceMul: def.priceMul || 1, buyMul: def.buyMul || 1, dir: dir || 0,
+      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, genMul: def.genMul || 1, minerSpeed: def.minerSpeed || 1, fuelCap: def.fuelCap || 300, range: def.range || 2, fuelMul: def.fuelMul || 1, priceMul: def.priceMul || 1, buyMul: def.buyMul || 1, bufferCap: def.bufferCap || 0, dir: dir || 0,
       data, mesh: null, animParts: null, active: false
     };
     const builder = builders[m.type];
@@ -544,7 +544,8 @@ const Factory = (() => {
         const below = at(m.x, m.y - 1, m.z);
         if (below && below !== m && canMachineAccept(below, item) && machineInsert(below, item)) return true;
         if (!m.data.buffer) m.data.buffer = { item, n: 0 };
-        if (m.data.buffer.item !== item || m.data.buffer.n >= ITEMS[item].stack) return false;
+        const cap = m.bufferCap || ITEMS[item].stack;
+        if (m.data.buffer.item !== item || m.data.buffer.n >= cap) return false;
         m.data.buffer.n++;
         return true;
       }
