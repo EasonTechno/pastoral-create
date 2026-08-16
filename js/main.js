@@ -2633,7 +2633,8 @@ const Game = (() => {
       const have = Mods.enabledIds();
       missingMods = want.filter(id => !have.includes(id));
       Mods.applySaveEnabled(want);
-      if (d.modData) Mods.restoreData(d.modData);
+      // 始终重置/恢复模组数据：切到不携带 modData 的档也应清空上一档残留，保证严格按存档隔离
+      Mods.restoreData(d.modData || null);
     }
     $('boot').classList.add('hidden');
     UI.closeAll();
