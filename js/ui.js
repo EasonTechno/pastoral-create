@@ -2092,7 +2092,7 @@ const UI = (() => {
         <span class="sv-icon">${s.creative ? '✦' : '⛏'}</span>
         <div class="sv-info">
           <div class="sv-name">${s.name}</div>
-          <div class="sv-meta">${s.creative ? '<span class="cr">创造</span>' : '生存'} · ${s.planetName} · 🪙${s.credits} · 游玩${s.playMin}分钟<br>${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}</div>
+          <div class="sv-meta">${s.creative ? '<span class="cr">创造</span>' : '生存'} · ${s.planetName} · 🪙${s.credits} · 游玩${s.playMin}分钟${window.Cloud && Cloud.syncBadge ? ' · <span class="cr" style="color:var(--leaf-dk)">' + Cloud.syncBadge(s.key) + '</span>' : ''}<br>${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}</div>
         </div>`;
       const act = document.createElement('button');
       act.className = 'sv-btn';

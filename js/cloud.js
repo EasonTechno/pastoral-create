@@ -225,6 +225,7 @@ const Cloud = (() => {
     get status(){ return syncSummary(); },
     get syncMap(){ return syncMap; },
     markLocalDirty, push,
+    syncBadge: key => statusText(key),
   };
 })();
 window.Cloud = Cloud;
