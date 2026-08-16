@@ -414,7 +414,7 @@ const Factory = (() => {
     initMats();
     const def = BLOCKS[blockKey];
     const m = {
-      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, dir: dir || 0,
+      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, dir: dir || 0,
       data: machineData(def.machine), mesh: null, animParts: null, active: false
     };
     const builder = builders[m.type];
@@ -638,7 +638,8 @@ const Factory = (() => {
     for (let i = 0; i < items.length; i++){
       const it = items[i];
       let maxT = i === 0 ? 1.0 : items[i - 1].t - GAP;
-      it.t = Math.min(it.t + BELT_SPEED * dt, Math.max(maxT, it.t));
+      const spd = BELT_SPEED * (b.beltSpeed || 1);
+      it.t = Math.min(it.t + spd * dt, Math.max(maxT, it.t));
           if (it.t >= 0.999){
         // 传给下一个（跳过装配机/精炼厂的正面输出侧：防止刚输出的成品被皮带推回去）
         const [dx, dz] = DIRS[b.dir];
@@ -1247,7 +1248,9 @@ const Factory = (() => {
           A.lamp.material = m.active ? M.glowGreen : M.glowOff;
           break;
         case 'belt': {
-          if (A.beltMat) A.beltMat.map.offset.y = (A.beltMat.map.offset.y - dt * BELT_SPEED) % 1;          if (A.beltMat2) A.beltMat2.map.offset.y = (A.beltMat2.map.offset.y - dt * BELT_SPEED) % 1;
+          const bspd = BELT_SPEED * (m.beltSpeed || 1);
+          if (A.beltMat) A.beltMat.map.offset.y = (A.beltMat.map.offset.y - dt * bspd) % 1;
+          if (A.beltMat2) A.beltMat2.map.offset.y = (A.beltMat2.map.offset.y - dt * bspd) % 1;
           const sh = m.shape || { turn: 0, slope: 0, inDir: (m.dir + 2) % 4 };
           const [dx, dz] = DIRS[m.dir];
           const [ix, iz] = DIRS[sh.inDir];   // 输入方向的“来向”偏移
