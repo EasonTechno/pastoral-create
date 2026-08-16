@@ -207,6 +207,11 @@ PC.game;  // 运行时为 Game API，启动早期为 null
 
 ---
 
+### 版本兼容
+
+- `Mods.version` → 当前游戏版本（如 `1.2.12`），模组可在启动时做兼容判断。
+- `PC.game.version` / `Game.version` → 同样返回游戏版本。
+
 ## 4. 脚本生命周期钩子
 
 ```js

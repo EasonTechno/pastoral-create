@@ -882,6 +882,7 @@ const Mods = (() => {
     installFromFile, installFromEntries, uninstall, toggleEnabled, applySaveEnabled, restart,
     refreshPanel, openPanel, bindUI,
     get dirty(){ return dirty; },
+    get version(){ return (typeof document !== 'undefined' && document.querySelector && document.querySelector('meta[name=game-version]') || {}).content || '0.0.0'; },
     get errors(){ return bootErrors.slice(); },
     boot,
   };

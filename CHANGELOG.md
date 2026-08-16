@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.13] - 2026-08-16
+- 模组/游戏运行时暴露版本号 API（`Mods.version`、`Game.version`、`PC.game.version`）。
+
 ## [1.2.12] - 2026-08-16
 - 新增工业机器：压缩机（compressor，复用装配机行为）；新增自动合成建材压缩岩（compact_stone）。
 

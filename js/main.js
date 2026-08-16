@@ -4570,6 +4570,7 @@ const Game = (() => {
     isGalaxyVisited(seed){ return seed === (window.Space ? Space.getCurrentGalaxySeed() : HOME_GALAXY_SEED) || seed === HOME_GALAXY_SEED || galaxyArchives[seed] !== undefined; },
     save, saveTo, loadFrom, loadCloudData, deleteSave, listSaves, doScan, warpTo, neighborSeeds,
     get activeSaveKey(){ return activeSaveKey; },
+    get version(){ return (document.querySelector('meta[name=game-version]') || {}).content || '0.0.0'; },
     get atmo(){ return atmo; },
     get scanMarkerCount(){ return scanMarkers.length; }, currentQuestChapter, profileStats,
     get dayCount(){ return dayCount; }, get season(){ return currentSeason(); },
