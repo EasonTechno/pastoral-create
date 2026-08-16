@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.28] - 2026-08-16
+- 新增大型仓储塔（chest_tower，64 格）。
+
 ## [1.2.27] - 2026-08-16
 - 新增交易商城（vendor_tower，购买价 ×0.85；支持 `def.buyMul`）。
 
