@@ -14,7 +14,7 @@ python3 -m http.server 8000
 ## 改动规范
 
 - 保持现有编码风格：每个模块是 IIFE 单例，暴露一个全局（Game / World / UI / Tex / Icons / Factory / Mods ...），直接编辑源码。
-- 开发模组请参考 `docs/mods.md`；新增工业方块参考 `docs/blocks.md`；光影参考 `docs/graphics.md`。
+- 开发模组请参考 `docs/mods.md`（打包用 `tools/pack-mod.sh`）；新增工业方块参考 `docs/blocks.md`；光影参考 `docs/graphics.md`。
 - 提交信息使用短前缀（`mods:` `graphics:` `blocks:` `save:` `fix:` `chore:`），一条 commit 只做一件事。
 - 默认分支为 `main`（本地 `master` 推送为 `main`，见 `tools/push-github.sh`）。
 

@@ -37,6 +37,9 @@ IndexedDB、网络、DOM 等）。**请只安装可信来源的模组**。
 仓库里附带了一个可直接打包安装的最小示例：`docs/example-mod/`
 （荧光砖 + 萤石粉 + 配方 + 任务 + `blockMined` 钩子）。
 
+打包工具：`tools/pack-mod.sh <模组目录> [输出.pcmod]`，会把 `mod.json`、
+`main.js`、`textures/`、`README.md`、`icon.png` 自动打进 `.pcmod`。
+
 ## 2. 包格式（.pcmod / .zip）
 
 ```
