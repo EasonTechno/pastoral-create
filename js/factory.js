@@ -413,9 +413,11 @@ const Factory = (() => {
   function place(x, y, z, blockKey, dir){
     initMats();
     const def = BLOCKS[blockKey];
+    const data = machineData(def.machine);
+    if ((def.machine === 'chest' || def.machine === 'collector') && def.slots) data.slots = new Array(def.slots).fill(null);
     const m = {
       x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, dir: dir || 0,
-      data: machineData(def.machine), mesh: null, animParts: null, active: false
+      data, mesh: null, animParts: null, active: false
     };
     const builder = builders[m.type];
     if (builder){
