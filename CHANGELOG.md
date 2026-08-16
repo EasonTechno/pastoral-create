@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.25] - 2026-08-16
+- 新增大型火力发电机（burner_tower，40kW、燃料效率 ×1.3；支持 `def.gen`/`def.fuelMul`）。
+
 ## [1.2.24] - 2026-08-16
 - 新增工业装饰方块：金属框架、工业管道、警告条。
 

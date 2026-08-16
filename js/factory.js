@@ -416,7 +416,7 @@ const Factory = (() => {
     const data = machineData(def.machine);
     if ((def.machine === 'chest' || def.machine === 'collector') && def.slots) data.slots = new Array(def.slots).fill(null);
     const m = {
-      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, genMul: def.genMul || 1, minerSpeed: def.minerSpeed || 1, fuelCap: def.fuelCap || 300, range: def.range || 2, dir: dir || 0,
+      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, genMul: def.genMul || 1, minerSpeed: def.minerSpeed || 1, fuelCap: def.fuelCap || 300, range: def.range || 2, fuelMul: def.fuelMul || 1, dir: dir || 0,
       data, mesh: null, animParts: null, active: false
     };
     const builder = builders[m.type];
@@ -1059,12 +1059,12 @@ const Factory = (() => {
       if (m.type === 'burner'){
         const d = m.data;
         if (d.burn <= 0 && d.fuel && d.fuel.n > 0){
-          d.burn = (FUEL_VALUE[d.fuel.item] || 4) * 1.5;
+          d.burn = (FUEL_VALUE[d.fuel.item] || 4) * 1.5 * (m.fuelMul || 1);
           d.burnMax = d.burn;
           d.fuel.n--;
           if (d.fuel.n <= 0) d.fuel = null;
         }
-        if (d.burn > 0){ d.burn -= dt; gen += POWER_GEN.burner; m.active = true; }
+        if (d.burn > 0){ d.burn -= dt; gen += (m.gen || POWER_GEN.burner); m.active = true; }
         else m.active = false;
       }
       if (m.type === 'boiler'){
