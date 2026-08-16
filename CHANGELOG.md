@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.16] - 2026-08-16
+- 新增深井采矿机（deep_miner，采矿速度 ×1.8；支持 `def.minerSpeed`）。
+
 ## [1.2.15] - 2026-08-16
 - 新增大型风力发电机（wind_tower，风力 ×1.6；支持 `def.genMul`）。
 

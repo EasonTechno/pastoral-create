@@ -84,6 +84,7 @@ const BLOCKS = {
   compact_stone:{ id: 81, name: '压缩岩', hard: 2.0, tiles: { all: 'stone' }, drops: [{ item: 'compact_stone', n: 1 }] },
   solar_farm:{ id: 82, name: '大型太阳能板', hard: 1.4, machine: 'solar', gen: 24, tiles: { all: 'solar_top' }, drops: [{ item: 'solar_farm_b', n: 1 }] },
   wind_tower:{ id: 83, name: '大型风力发电机', hard: 1.4, machine: 'wind', genMul: 1.6, tiles: { all: 'metal', top: 'wind_pole' }, drops: [{ item: 'wind_tower_b', n: 1 }] },
+  deep_miner:{ id: 84, name: '深井采矿机', hard: 1.8, machine: 'miner', minerSpeed: 1.8, tiles: { all: 'metal', top: 'miner_top' }, drops: [{ item: 'deep_miner_b', n: 1 }] },
 };
 const BLOCK_BY_ID = {};
 for (const k in BLOCKS){ BLOCKS[k].key = k; BLOCK_BY_ID[BLOCKS[k].id] = BLOCKS[k]; if (BLOCKS[k].solid === undefined) BLOCKS[k].solid = true; }
@@ -172,6 +173,7 @@ const ITEMS = {
   compact_stone: { name: '压缩岩', cat: 'blk', iconBlock: 'compact_stone', block: 'compact_stone', stack: 250, desc: '加压成型的致密建材。', price: 6 },
   solar_farm_b:  { name: '大型太阳能板', cat: 'mach', iconBlock: 'solar_farm', block: 'solar_farm', stack: 50, desc: '白天输出 24kW，比普通太阳能板更强。', price: 800 },
   wind_tower_b:  { name: '大型风力发电机', cat: 'mach', iconBlock: 'wind_tower', block: 'wind_tower', stack: 50, desc: '风力输出 ×1.6，高海拔收益更高。', price: 640 },
+  deep_miner_b:  { name: '深井采矿机', cat: 'mach', iconBlock: 'deep_miner', block: 'deep_miner', stack: 20, desc: '采矿速度 ×1.8 的增强矿机。', price: 900 },
 };
 for (const k in ITEMS){ ITEMS[k].id = k; if (!ITEMS[k].stack) ITEMS[k].stack = 250; }
 
@@ -314,6 +316,7 @@ const RECIPES = [
   { id: 'compact_stone', out: { compact_stone: 4 }, in: { stone: 8 }, where: 'assembler', time: 2.5 },
   { id: 'solar_farm_b', out: { solar_farm_b: 1 }, in: { solar_b: 1, iron: 4, circuit: 2, glass_b: 4 }, where: 'both', time: 6.0, tech: 'power' },
   { id: 'wind_tower_b', out: { wind_tower_b: 1 }, in: { wind_b: 1, iron: 4, gear: 2, circuit: 1 }, where: 'both', time: 6.0, tech: 'power' },
+  { id: 'deep_miner_b', out: { deep_miner_b: 1 }, in: { miner_b: 1, iron: 6, gear: 2, circuit: 2 }, where: 'both', time: 6.0, tech: 'automation' },
 ];
 const RECIPE_BY_ID = {}; RECIPES.forEach(r => RECIPE_BY_ID[r.id] = r);
 
@@ -392,7 +395,7 @@ BIOMES.redmoss.animal = { body: 0xc25a48, legs: 0x8a3a2c, eye: 0xffe8a0, count: 
 BIOMES.hive.animal    = { body: 0xd8862a, legs: 0x8a5210, eye: 0x1a1a1a, count: 10, name: '蜂窝守卫', type: 'strider' };
 
 // ================= 商品交易表 =================
-const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed','vent_pipe_b','cable_spool_b','light_panel_b','battery_b','boiler_b','fast_belt_b','storage_vault_b','compressor_b','compact_stone','solar_farm_b','wind_tower_b'];
+const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed','vent_pipe_b','cable_spool_b','light_panel_b','battery_b','boiler_b','fast_belt_b','storage_vault_b','compressor_b','compact_stone','solar_farm_b','wind_tower_b','deep_miner_b'];
 
 // ================= 任务线 =================
 // type: collect(拥有n个) / place / tech / farm(农田行为计数)

@@ -416,7 +416,7 @@ const Factory = (() => {
     const data = machineData(def.machine);
     if ((def.machine === 'chest' || def.machine === 'collector') && def.slots) data.slots = new Array(def.slots).fill(null);
     const m = {
-      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, genMul: def.genMul || 1, dir: dir || 0,
+      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, genMul: def.genMul || 1, minerSpeed: def.minerSpeed || 1, dir: dir || 0,
       data, mesh: null, animParts: null, active: false
     };
     const builder = builders[m.type];
@@ -1004,7 +1004,7 @@ const Factory = (() => {
     const d = m.data;
     m.active = true;
     const eff = Math.max(sat, 0.35);       // 有电全速，断电 35% 手摇低速
-    d.prog += dt * 0.5 * eff;              // 2秒/矿 @满电
+    d.prog += dt * 0.5 * (m.minerSpeed || 1) * eff;   // 2秒/矿 @满电（支持 def.minerSpeed）
     if (d.prog >= 1){
       d.prog = 0;
       if (!d.out) d.out = { item: pickMinerOre(), n: 0 };   // 每批随机一种矿物
