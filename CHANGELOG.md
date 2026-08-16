@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.20] - 2026-08-16
+- 新增大型灌溉机（irrigator_tower，7×7 覆盖；农用机器支持 `def.range`）。
+
 ## [1.2.19] - 2026-08-16
 - 新增大型核反应堆（reactor_tower，150kW、燃料容量更大；支持 `def.gen`/`def.fuelCap`）。
 

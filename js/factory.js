@@ -416,7 +416,7 @@ const Factory = (() => {
     const data = machineData(def.machine);
     if ((def.machine === 'chest' || def.machine === 'collector') && def.slots) data.slots = new Array(def.slots).fill(null);
     const m = {
-      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, genMul: def.genMul || 1, minerSpeed: def.minerSpeed || 1, fuelCap: def.fuelCap || 300, dir: dir || 0,
+      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, genMul: def.genMul || 1, minerSpeed: def.minerSpeed || 1, fuelCap: def.fuelCap || 300, range: def.range || 2, dir: dir || 0,
       data, mesh: null, animParts: null, active: false
     };
     const builder = builders[m.type];
@@ -945,7 +945,7 @@ const Factory = (() => {
   // ---------- 农业机器 ----------
   function irrigatorTick(m, dt){
     if (!m.active) return;
-    const cells = Farm.farmlandNear(m.x, m.y, m.z, 2, false);
+    const cells = Farm.farmlandNear(m.x, m.y, m.z, m.range || 2, false);
     for (const c of cells){
       if (!c.c.water){
         c.c.water = true;
@@ -957,7 +957,7 @@ const Factory = (() => {
     if (!m.active || !m.data.seed) return;
     const crop = Object.values(CROPS).find(c => c.seed === m.data.seed.item);
     if (!crop) return;
-    const cells = Farm.farmlandNear(m.x, m.y, m.z, 2, true);
+    const cells = Farm.farmlandNear(m.x, m.y, m.z, m.range || 2, true);
     if (!cells.length) return;
     const c = cells[0];
     if (Farm.plant(c.x, c.y, c.z, crop.id)){
@@ -969,7 +969,7 @@ const Factory = (() => {
   function harvesterTick(m){
     if (!m.active) return;
     if (!m.data.out) m.data.out = { item: null, n: 0 };
-    const crops = Farm.cropsNear(m.x, m.y, m.z, 2);
+    const crops = Farm.cropsNear(m.x, m.y, m.z, m.range || 2);
     for (const c of crops){
       if (c.cell.stage < c.def.stages - 1) continue;
       const yields = Farm.harvest(c.x, c.y, c.z);
