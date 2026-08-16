@@ -416,7 +416,7 @@ const Factory = (() => {
     const data = machineData(def.machine);
     if ((def.machine === 'chest' || def.machine === 'collector') && def.slots) data.slots = new Array(def.slots).fill(null);
     const m = {
-      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, dir: dir || 0,
+      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, dir: dir || 0,
       data, mesh: null, animParts: null, active: false
     };
     const builder = builders[m.type];
@@ -1054,7 +1054,7 @@ const Factory = (() => {
     // 电力统计
     let gen = 0, use = 0;
     for (const m of machines.values()){
-      if (m.type === 'solar') gen += POWER_GEN.solar * Math.max(0, dayFactor);
+      if (m.type === 'solar') gen += (m.gen || POWER_GEN.solar) * Math.max(0, dayFactor);
       if (m.type === 'wind'){ m.data.out = windPower(m); gen += m.data.out; m.active = true; }
       if (m.type === 'burner'){
         const d = m.data;
