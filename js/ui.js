@@ -1134,7 +1134,7 @@ const UI = (() => {
         const it = ITEMS[id];
         if (!it || it.price <= 0) continue;
         const mod = (Game.market && Game.market[id]) || 1;
-        const price = Math.max(1, Math.round(it.price * mod * 1.25));
+        const price = Math.max(1, Math.round(it.price * mod * 1.25 * (m.buyMul || 1)));
         const b = document.createElement('button'); b.className = 'ctab';
         b.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 2px';
         b.appendChild(Icons.img(id));

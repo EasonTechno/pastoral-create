@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.27] - 2026-08-16
+- 新增交易商城（vendor_tower，购买价 ×0.85；支持 `def.buyMul`）。
+
 ## [1.2.26] - 2026-08-16
 - 新增交易塔（trade_tower，售价 ×1.15；支持 `def.priceMul`）。
 
