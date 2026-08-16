@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # 同步到本地线上目录 /opt/pastoral-create（agents.md 部署义务）。
 # 先跑红线预检；只同步仓库内合规内容，绝不覆盖 server/data 真实云存档。
+# 注意：本脚本**不排除 assets/textures**，因此线上网页会带上本地材质包；
+#       Git/GitHub 仍然通过 .gitignore/check-redlines 排除这些材质包。
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PROD="${PROD_DIR:-/opt/pastoral-create}"

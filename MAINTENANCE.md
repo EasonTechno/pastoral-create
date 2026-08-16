@@ -24,9 +24,10 @@
 
 ### 3.1 版权红线（最重要）
 
-- 任何第三方材质包贴图：`assets/textures/` 下只允许 `README.md` 和说明文件，禁止放入任何 PNG 贴图。
-- 尤其 **Whimscape / PureEdge / Pastoral** 的贴图严禁上传（授权不允许再分发）。
-- 不要通过 PR / 提交向仓库添加贴图文件。玩家自行下载、自行导入，仓库不携带。
+- 任何第三方材质包贴图：**GitHub 仓库**中 `assets/textures/` 下只允许 `README.md` 和说明文件，禁止提交任何 PNG/JPG/GIF 贴图。
+- 尤其 **Whimscape / PureEdge / Pastoral** 的贴图严禁推送到 Git/GitHub（授权不允许再分发）。
+- 不要通过 PR / 提交向仓库添加贴图文件。玩家自行下载、自行导入，GitHub 仓库不携带。
+- **线上网页目录（如 `/opt/pastoral-create`）可以保留材质包**：它只用于网页体验，不属于 Git 发布物，也不会被 `git push` 带走。
 
 ### 3.2 隐私 / 凭据
 

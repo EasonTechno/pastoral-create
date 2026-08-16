@@ -35,7 +35,7 @@ node tools/version.js refresh
 
 详见 `MAINTENANCE.md` 第 5.3 节，至少确认：
 
-- [ ] 没有 `assets/textures/` 下的第三方贴图（PNG/JPG/GIF）
+- [ ] GitHub 推送中没有 `assets/textures/` 下的第三方贴图（PNG/JPG/GIF）（本地线上目录 `/opt` 可保留材质包用于网页体验）
 - [ ] 没有 20MB 的 `MapleMono-NF-CN-Medium.ttf`
 - [ ] 没有 token / 密钥 / `.env`
 - [ ] 没有 `server/data/*.json` 真实数据
