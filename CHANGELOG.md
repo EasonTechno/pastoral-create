@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.15] - 2026-08-16
+- 新增大型风力发电机（wind_tower，风力 ×1.6；支持 `def.genMul`）。
+
 ## [1.2.14] - 2026-08-16
 - 新增大型太阳能板（solar_farm，24kW/块；工厂支持 `def.gen` 自定义输出）。
 

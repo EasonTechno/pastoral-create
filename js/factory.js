@@ -416,7 +416,7 @@ const Factory = (() => {
     const data = machineData(def.machine);
     if ((def.machine === 'chest' || def.machine === 'collector') && def.slots) data.slots = new Array(def.slots).fill(null);
     const m = {
-      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, dir: dir || 0,
+      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, genMul: def.genMul || 1, dir: dir || 0,
       data, mesh: null, animParts: null, active: false
     };
     const builder = builders[m.type];
@@ -1044,10 +1044,10 @@ const Factory = (() => {
   // ---------- 主 tick ----------
   let windT = 0;
   function windPower(m){
-    // 海拔越高风越大 + 阵风波动
+    // 海拔越高风越大 + 阵风波动；大型风机额外乘 genMul
     const alt = Math.max(0, m.y - World.SEA) * 0.18;
     const gust = Math.sin(windT * 0.5 + m.x * 0.7 + m.z * 1.3) * 3 + Math.sin(windT * 0.13) * 2;
-    return THREE.MathUtils.clamp(6 + alt + gust, 2, 16);
+    return THREE.MathUtils.clamp(6 + alt + gust, 2, 16) * (m.genMul || 1);
   }
   function tick(dt, dayFactor){
     windT += dt;
