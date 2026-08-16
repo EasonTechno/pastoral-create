@@ -89,6 +89,8 @@ const BLOCKS = {
   assembler_tower:{ id: 86, name: '大型装配机', hard: 1.8, machine: 'assembler', speed: 1.6, tiles: { all: 'metal', top: 'assembler_top' }, drops: [{ item: 'assembler_tower_b', n: 1 }] },
   reactor_tower:{ id: 87, name: '大型核反应堆', hard: 2.4, machine: 'reactor', gen: 150, fuelCap: 600, tiles: { all: 'reactor_side' }, drops: [{ item: 'reactor_tower_b', n: 1 }] },
   irrigator_tower:{ id: 88, name: '大型灌溉机', hard: 1.2, machine: 'irrigator', range: 3, tiles: { all: 'metal', top: 'storage_top' }, drops: [{ item: 'irrigator_tower_b', n: 1 }] },
+  harvester_tower:{ id: 89, name: '大型收割机', hard: 1.3, machine: 'harvester', range: 3, tiles: { all: 'metal_dark', top: 'vent' }, drops: [{ item: 'harvester_tower_b', n: 1 }] },
+  planter_tower:{ id: 90, name: '大型播种机', hard: 1.3, machine: 'planter', range: 3, tiles: { all: 'metal', top: 'miner_top' }, drops: [{ item: 'planter_tower_b', n: 1 }] },
 };
 const BLOCK_BY_ID = {};
 for (const k in BLOCKS){ BLOCKS[k].key = k; BLOCK_BY_ID[BLOCKS[k].id] = BLOCKS[k]; if (BLOCKS[k].solid === undefined) BLOCKS[k].solid = true; }
@@ -182,6 +184,8 @@ const ITEMS = {
   assembler_tower_b:{ name: '大型装配机', cat: 'mach', iconBlock: 'assembler_tower', block: 'assembler_tower', stack: 20, desc: '装配速度 ×1.6 的大型装配机。', price: 1100 },
   reactor_tower_b:  { name: '大型核反应堆', cat: 'mach', iconBlock: 'reactor_tower', block: 'reactor_tower', stack: 10, desc: '150kW 全天候发电，燃料容量更大。', price: 9000 },
   irrigator_tower_b:{ name: '大型灌溉机', cat: 'mach', iconBlock: 'irrigator_tower', block: 'irrigator_tower', stack: 20, desc: '覆盖 7×7 耕地的大型灌溉机。', price: 950 },
+  harvester_tower_b:{ name: '大型收割机', cat: 'mach', iconBlock: 'harvester_tower', block: 'harvester_tower', stack: 20, desc: '覆盖 7×7 的大型自动收割机。', price: 1600 },
+  planter_tower_b:  { name: '大型播种机', cat: 'mach', iconBlock: 'planter_tower', block: 'planter_tower', stack: 20, desc: '覆盖 7×7 的大型自动播种机。', price: 1300 },
 };
 for (const k in ITEMS){ ITEMS[k].id = k; if (!ITEMS[k].stack) ITEMS[k].stack = 250; }
 
@@ -329,6 +333,8 @@ const RECIPES = [
   { id: 'assembler_tower_b', out: { assembler_tower_b: 1 }, in: { assembler_b: 1, iron: 8, circuit: 1, plate: 1 }, where: 'both', time: 7.0, tech: 'assembly' },
   { id: 'reactor_tower_b', out: { reactor_tower_b: 1 }, in: { reactor_b: 1, titanium: 8, plate: 4, circuit: 4 }, where: 'both', time: 12.0, tech: 'nuclear' },
   { id: 'irrigator_tower_b', out: { irrigator_tower_b: 1 }, in: { irrigator_b: 1, iron: 6, copper: 4 }, where: 'both', time: 6.0, tech: 'agri_auto' },
+  { id: 'harvester_tower_b', out: { harvester_tower_b: 1 }, in: { harvester_b: 1, iron: 8, gear: 4, circuit: 1 }, where: 'both', time: 7.0, tech: 'agri_auto' },
+  { id: 'planter_tower_b', out: { planter_tower_b: 1 }, in: { planter_b: 1, iron: 8, gear: 4, circuit: 1 }, where: 'both', time: 7.0, tech: 'agri_auto' },
 ];
 const RECIPE_BY_ID = {}; RECIPES.forEach(r => RECIPE_BY_ID[r.id] = r);
 
@@ -407,7 +413,7 @@ BIOMES.redmoss.animal = { body: 0xc25a48, legs: 0x8a3a2c, eye: 0xffe8a0, count: 
 BIOMES.hive.animal    = { body: 0xd8862a, legs: 0x8a5210, eye: 0x1a1a1a, count: 10, name: '蜂窝守卫', type: 'strider' };
 
 // ================= 商品交易表 =================
-const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed','vent_pipe_b','cable_spool_b','light_panel_b','battery_b','boiler_b','fast_belt_b','storage_vault_b','compressor_b','compact_stone','solar_farm_b','wind_tower_b','deep_miner_b','refinery_tower_b','assembler_tower_b','reactor_tower_b','irrigator_tower_b'];
+const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed','vent_pipe_b','cable_spool_b','light_panel_b','battery_b','boiler_b','fast_belt_b','storage_vault_b','compressor_b','compact_stone','solar_farm_b','wind_tower_b','deep_miner_b','refinery_tower_b','assembler_tower_b','reactor_tower_b','irrigator_tower_b','harvester_tower_b','planter_tower_b'];
 
 // ================= 任务线 =================
 // type: collect(拥有n个) / place / tech / farm(农田行为计数)
