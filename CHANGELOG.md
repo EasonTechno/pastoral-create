@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.31] - 2026-08-16
+- 模组 API 新增 `Mods.isEnabled(id)`。
+
 ## [1.2.30] - 2026-08-16
 - 新增工业地台、钢化玻璃两组工业建材。
 
