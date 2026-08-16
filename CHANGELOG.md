@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.29] - 2026-08-16
+- 模组 API 新增 `Mods.has(id)` 运行时判断已安装启用的模组。
+
 ## [1.2.28] - 2026-08-16
 - 新增大型仓储塔（chest_tower，64 格）。
 
