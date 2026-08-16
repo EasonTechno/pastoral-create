@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.33] - 2026-08-16
+- 模组 API 新增 `Mods.installedIds()`。
+
 ## [1.2.32] - 2026-08-16
 - 新增大型向漏斗（chute_tower，暂存上限更大；支持 `def.bufferCap`）。
 

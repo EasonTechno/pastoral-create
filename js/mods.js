@@ -879,6 +879,7 @@ const Mods = (() => {
       });
     },
     enabledIds(){ return config.mods.filter(m => m.enabled).map(m => m.id); },
+    installedIds(){ return config.mods.map(m => m.id); },
     has(id){ return config.mods.some(m => m.id === id && m.enabled); },
     isEnabled(id){ return config.mods.some(m => m.id === id && m.enabled); },
     installFromFile, installFromEntries, uninstall, toggleEnabled, applySaveEnabled, restart,
