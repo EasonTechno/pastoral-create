@@ -576,6 +576,28 @@ const Mods = (() => {
     return retried;
   }
 
+  // 按存档应用模组启用集合：读档时把当前全局启用状态切到该存档的模组清单。
+  // 模组清单（enabledIds）与数据（modData）都随存档保存，因此每个存档独立拥有自己的模组配置。
+  function applySaveEnabled(ids){
+    const set = new Set(ids || []);
+    let changed = false;
+    for (const rec of config.mods){
+      const next = set.has(rec.id);
+      if (rec.enabled === next) continue;
+      rec.enabled = next;
+      changed = true;
+      if (next){
+        const rt = activateRecord(rec);
+        if (rt.ok) loadAssetsFor(rec).catch(() => {});
+      } else {
+        removeModListeners(rec.id);
+        active.delete(rec.id);
+      }
+    }
+    if (changed && window.UI && UI.refreshPanel) UI.refreshPanel();
+    return changed;
+  }
+
   // ---------- 安装 ----------
   async function installFromEntries(entries, sourceName){
     if (typeof Tex === 'undefined' || !Tex.readZip) throw new Error('ZIP 读取器未就绪');
@@ -857,7 +879,7 @@ const Mods = (() => {
       });
     },
     enabledIds(){ return config.mods.filter(m => m.enabled).map(m => m.id); },
-    installFromFile, installFromEntries, uninstall, toggleEnabled, restart,
+    installFromFile, installFromEntries, uninstall, toggleEnabled, applySaveEnabled, restart,
     refreshPanel, openPanel, bindUI,
     get dirty(){ return dirty; },
     get errors(){ return bootErrors.slice(); },

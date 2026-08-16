@@ -2599,11 +2599,14 @@ const Game = (() => {
       if (Array.isArray(d.planets)) d.planets = {};
     }
     let missingMods = null;
-    if (window.Mods && Array.isArray(d.mods) && d.mods.length){
+    if (window.Mods){
+      // 基于存档：把当前全局模组启用状态切换为该存档自己的模组清单
+      const want = d.mods || [];
       const have = Mods.enabledIds();
-      missingMods = d.mods.filter(id => !have.includes(id));
+      missingMods = want.filter(id => !have.includes(id));
+      Mods.applySaveEnabled(want);
+      if (d.modData) Mods.restoreData(d.modData);
     }
-    if (window.Mods) Mods.restoreData(d.modData);
     $('boot').classList.add('hidden');
     UI.closeAll();
     activeSaveKey = key;
@@ -4528,6 +4531,7 @@ const Game = (() => {
     get warpLockSeed(){ return warpLock ? warpLock.seed : null; },
     isGalaxyVisited(seed){ return seed === (window.Space ? Space.getCurrentGalaxySeed() : HOME_GALAXY_SEED) || seed === HOME_GALAXY_SEED || galaxyArchives[seed] !== undefined; },
     save, saveTo, loadFrom, loadCloudData, deleteSave, listSaves, doScan, warpTo, neighborSeeds,
+    get activeSaveKey(){ return activeSaveKey; },
     get atmo(){ return atmo; },
     get scanMarkerCount(){ return scanMarkers.length; }, currentQuestChapter, profileStats,
     get dayCount(){ return dayCount; }, get season(){ return currentSeason(); },
