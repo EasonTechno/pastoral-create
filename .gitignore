@@ -15,3 +15,9 @@ assets/home-background.png
 
 # Browser-generated project data should never be committed
 *.local
+
+# 不应上传：本地工具 / 依赖 / 回滚备份
+node_modules/
+.rollback/
+.agents/
+.dsh-vision-toolkit/
