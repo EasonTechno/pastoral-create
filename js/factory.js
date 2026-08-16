@@ -1027,7 +1027,7 @@ const Factory = (() => {
         for (const k in r.in) d.in[k] -= r.in[k];
       }
       m.active = sat > 0.05;
-      d.prog += dt / r.time * sat;
+      d.prog += dt / r.time * sat * (m.speed || 1);
       if (d.prog >= 1){
         d.prog = 0;
         const outItem = Object.keys(r.out)[0];
