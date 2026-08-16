@@ -80,6 +80,8 @@ const BLOCKS = {
   boiler:   { id: 77, name: '高效锅炉', hard: 1.6, machine: 'boiler', tiles: { all: 'metal_dark', front: 'furnace_front' }, drops: [{ item: 'boiler_b', n: 1 }] },
   fast_belt:{ id: 78, name: '高速传送带', hard: 0.6, machine: 'belt', beltSpeed: 2.0, lowbox: true, tiles: { all: 'belt' }, drops: [{ item: 'fast_belt_b', n: 1 }] },
   storage_vault:{ id: 79, name: '大型仓储柜', hard: 1.6, machine: 'chest', slots: 48, tiles: { all: 'metal', top: 'vent' }, drops: [{ item: 'storage_vault_b', n: 1 }] },
+  compressor:{ id: 80, name: '压缩机', hard: 1.6, machine: 'assembler', tiles: { all: 'metal_dark', top: 'vent' }, drops: [{ item: 'compressor_b', n: 1 }] },
+  compact_stone:{ id: 81, name: '压缩岩', hard: 2.0, tiles: { all: 'stone' }, drops: [{ item: 'compact_stone', n: 1 }] },
 };
 const BLOCK_BY_ID = {};
 for (const k in BLOCKS){ BLOCKS[k].key = k; BLOCK_BY_ID[BLOCKS[k].id] = BLOCKS[k]; if (BLOCKS[k].solid === undefined) BLOCKS[k].solid = true; }
@@ -164,6 +166,8 @@ const ITEMS = {
   boiler_b:    { name: '高效锅炉', cat: 'mach', iconBlock: 'boiler', block: 'boiler', stack: 20, desc: '50kW 锅炉，燃料利用率更高（燃烧时间×2.5）。', price: 900 },
   fast_belt_b: { name: '高速传送带', cat: 'mach', iconBlock: 'fast_belt', block: 'fast_belt', stack: 200, desc: '传送速度 1.67× 的传送带。', price: 90 },
   storage_vault_b:{ name: '大型仓储柜', cat: 'mach', iconBlock: 'storage_vault', block: 'storage_vault', stack: 20, desc: '48 格大型仓储，工业堆场必备。', price: 240 },
+  compressor_b:  { name: '压缩机', cat: 'mach', iconBlock: 'compressor', block: 'compressor', stack: 20, desc: '可自动合成的高压装配机。', price: 720 },
+  compact_stone: { name: '压缩岩', cat: 'blk', iconBlock: 'compact_stone', block: 'compact_stone', stack: 250, desc: '加压成型的致密建材。', price: 6 },
 };
 for (const k in ITEMS){ ITEMS[k].id = k; if (!ITEMS[k].stack) ITEMS[k].stack = 250; }
 
@@ -302,6 +306,8 @@ const RECIPES = [
   { id: 'boiler_b',     out: { boiler_b: 1 },     in: { iron: 10, gear: 2, circuit: 1, stone: 4 }, where: 'both', time: 6.0, tech: 'power' },
   { id: 'fast_belt_b',  out: { fast_belt_b: 2 },  in: { iron: 2, gear: 2, copper: 1 }, where: 'both', time: 2.0, tech: 'automation' },
   { id: 'storage_vault_b', out: { storage_vault_b: 1 }, in: { iron: 8, planks_b: 10, chest_b: 1 }, where: 'both', time: 5.0, tech: 'automation' },
+  { id: 'compressor_b', out: { compressor_b: 1 }, in: { iron: 10, gear: 4, circuit: 2, plate: 1 }, where: 'both', time: 6.0, tech: 'assembly' },
+  { id: 'compact_stone', out: { compact_stone: 4 }, in: { stone: 8 }, where: 'assembler', time: 2.5 },
 ];
 const RECIPE_BY_ID = {}; RECIPES.forEach(r => RECIPE_BY_ID[r.id] = r);
 
@@ -380,7 +386,7 @@ BIOMES.redmoss.animal = { body: 0xc25a48, legs: 0x8a3a2c, eye: 0xffe8a0, count: 
 BIOMES.hive.animal    = { body: 0xd8862a, legs: 0x8a5210, eye: 0x1a1a1a, count: 10, name: '蜂窝守卫', type: 'strider' };
 
 // ================= 商品交易表 =================
-const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed','vent_pipe_b','cable_spool_b','light_panel_b','battery_b','boiler_b','fast_belt_b','storage_vault_b'];
+const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed','vent_pipe_b','cable_spool_b','light_panel_b','battery_b','boiler_b','fast_belt_b','storage_vault_b','compressor_b','compact_stone'];
 
 // ================= 任务线 =================
 // type: collect(拥有n个) / place / tech / farm(农田行为计数)
