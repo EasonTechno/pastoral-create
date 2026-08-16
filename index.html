@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#6f4c24">
-<meta name="game-version" content="1.2.0">
+<meta name="game-version" content="1.2.1">
 <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
 <link rel="icon" href="data:,">
 <title>发条农庄 — 田园种田工业</title>
@@ -302,6 +302,34 @@
       <span class="set-val" id="setCornerInsetVal"></span>
     </div>
     <div class="set-row">
+      <span class="set-label">环境氛围光</span>
+      <div class="set-opts" id="setLightFx">
+        <button data-q="auto">自动</button>
+        <button data-q="enhanced">增强</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">水面反射</span>
+      <div class="set-opts" id="setWaterReflect">
+        <button data-q="off">关</button>
+        <button data-q="on">开</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">光追增强</span>
+      <div class="set-opts" id="setRtx">
+        <button data-q="off">关</button>
+        <button data-q="on">开</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">柔和阴影</span>
+      <div class="set-opts" id="setSoftShadow">
+        <button data-q="off">关</button>
+        <button data-q="on">开</button>
+      </div>
+    </div>
+    <div class="set-row">
       <span class="set-label">材质包</span>
       <div class="set-opts" id="setTexPack">
         <button data-q="default">Default</button>
@@ -403,7 +431,7 @@ window.addEventListener('unhandledrejection', e => {
 <script src="js/factory.js?v=4c47c3f3"></script>
 <script src="js/player.js?v=c7674980"></script>
 <script src="js/ui.js?v=c39a2055"></script>
-<script src="js/main.js?v=301bc119"></script>
+<script src="js/main.js?v=0b5b08f2"></script>
 <script src="js/cloud.js?v=3a17311f"></script>
 <script>
 console.log('发条农庄 · 田园种田工业');

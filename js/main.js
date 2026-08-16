@@ -195,7 +195,7 @@ const Game = (() => {
   // ---------- 画面设置（ESC → 画面设置；持久化到 localStorage）----------
   const SETTINGS_KEY = 'starforge_settings';
   const mobileDevice = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
-  const settings = { fov: 75, chunkDist: mobileDevice ? 10 : 16, farDist: mobileDevice ? 768 : 1536, quality: mobileDevice ? 'high' : 'mid', planetLod: 'mid', clouds: 'on', realAtmo: 'on', npcShips: 7, camPitch: 35, cornerInset: 0 };
+  const settings = { fov: 75, chunkDist: mobileDevice ? 10 : 16, farDist: mobileDevice ? 768 : 1536, quality: mobileDevice ? 'high' : 'mid', planetLod: 'mid', clouds: 'on', realAtmo: 'on', npcShips: 7, camPitch: 35, cornerInset: 0, lightFx: 'auto', waterReflect: 'on', rtx: 'off', softShadow: 'on' };
   try { Object.assign(settings, JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}')); } catch(e){}
   if (mobileDevice){
     // 旧版本可能保存过低画质配置；移动端现在只降渲染面积，不降材质与特效。
@@ -214,11 +214,13 @@ const Game = (() => {
     renderer.setPixelRatio(q === 'low' ? 0.75 : q === 'high' ? Math.min(window.devicePixelRatio, 2) : Math.min(window.devicePixelRatio, 1.5));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = q === 'high';
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.toneMapping = q === 'high' ? THREE.ACESFilmicToneMapping : THREE.NoToneMapping;
-    renderer.toneMappingExposure = 1.18;
-    $('game').style.filter = q === 'high' ? 'saturate(1.14) contrast(1.04)' : '';
+    renderer.shadowMap.type = settings.softShadow === 'on' ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
+    const rtx = settings.rtx === 'on';
+    renderer.toneMapping = (q === 'high' || rtx) ? THREE.ACESFilmicToneMapping : THREE.NoToneMapping;
+    renderer.toneMappingExposure = rtx ? 1.32 : 1.18;
+    $('game').style.filter = rtx ? 'saturate(1.22) contrast(1.08) brightness(1.04)' : (q === 'high' ? 'saturate(1.14) contrast(1.04)' : '');
     World.setShadows(q === 'high');
+    applyWaterReflect(q === 'high' && settings.waterReflect === 'on');
     if (planetScene){
       if (settings.clouds === 'on' && !groundClouds) buildGroundClouds();
       if (groundClouds) groundClouds.inst.visible = settings.clouds === 'on';
@@ -234,6 +236,7 @@ const Game = (() => {
     }
     if (sunLight){
       sunLight.castShadow = q === 'high';
+      if (sunLight.shadow) sunLight.shadow.radius = settings.softShadow === 'on' ? 4 : 0;
     }
     if (state === 'planet') updateDayNight(0);
     if (state === 'planet') applyCamProjection();
@@ -245,6 +248,31 @@ const Game = (() => {
     light.shadow.camera.top = 70; light.shadow.camera.bottom = -70;
     light.shadow.camera.near = 1; light.shadow.camera.far = 500;
     light.shadow.bias = -0.0006;
+  }
+  // ---- 光效：水面反射（伪反射贴图）+ 光追增强（ACES/柔和阴影近似） ----
+  let skyEnv = null;
+  function makeSkyEnv(){
+    const c = document.createElement('canvas'); c.width = c.height = 64;
+    const g = c.getContext('2d'), grad = g.createLinearGradient(0, 0, 0, 64);
+    grad.addColorStop(0, '#0a1c3a'); grad.addColorStop(0.5, '#4a6fa8'); grad.addColorStop(0.82, '#ffb877'); grad.addColorStop(1, '#6a5a3a');
+    g.fillStyle = grad; g.fillRect(0, 0, 64, 64);
+    g.fillStyle = 'rgba(255,240,200,0.95)'; g.beginPath(); g.arc(46, 22, 9, 0, 7); g.fill();
+    g.fillStyle = 'rgba(255,255,255,0.5)'; g.beginPath(); g.arc(12, 12, 3, 0, 7); g.fill();
+    skyEnv = new THREE.CubeTexture([c, c, c, c, c, c]); skyEnv.needsUpdate = true;
+  }
+  function applyWaterReflect(on){
+    if (!window.World || !World.materials || !World.materials[1]) return;
+    const water = World.materials[1];
+    if (on && !skyEnv) makeSkyEnv();
+    water.envMap = on ? skyEnv : null;
+    water.envMapIntensity = on ? 0.7 : 1;
+    water.opacity = on ? 0.82 : 0.72;
+    water.needsUpdate = true;
+  }
+  function bindOpt(id, key){
+    document.querySelectorAll('#' + id + ' button').forEach(b => {
+      b.onclick = () => { Sound.play('uiClick'); settings[key] = b.dataset.q; applySettings(); refreshSettingsUI(); };
+    });
   }
 
   // ---------- 状态 ----------
@@ -2704,12 +2732,13 @@ const Game = (() => {
       sunLight.position.copy(lref).addScaledVector(_skyDir, 180);
       sunLight.target.position.copy(lref);
       const b = World.biome;
-      ambLight.intensity = 0.16 + day * 0.24;
-      hemiLight.intensity = 0.15 + day * 0.4;
+      const fx = settings.lightFx === 'enhanced' ? 1.2 : 1;
+      ambLight.intensity = (0.16 + day * 0.24) * fx;
+      hemiLight.intensity = (0.15 + day * 0.4) * fx;
       ambLight.color.setRGB(0.92, 0.94, 1);
       hemiLight.color.setRGB(b.sky[0], b.sky[1], b.sky[2]);
       hemiLight.groundColor.setRGB(0.35, 0.29, 0.20);
-      sunLight.intensity = 0.25 + day * 0.85;
+      sunLight.intensity = (0.25 + day * 0.85) * fx;
       const skyDay = new THREE.Color(b.sky[0], b.sky[1], b.sky[2]);
       const skyNight = new THREE.Color(0x070a18);
       const sky = skyNight.clone().lerp(skyDay, day);
@@ -4353,6 +4382,10 @@ const Game = (() => {
       b.classList.toggle('on', b.dataset.q === settings.realAtmo));
     document.querySelectorAll('#setCamPitch button').forEach(b =>
       b.classList.toggle('on', +b.dataset.q === settings.camPitch));
+    document.querySelectorAll('#setLightFx button').forEach(b => b.classList.toggle('on', b.dataset.q === settings.lightFx));
+    document.querySelectorAll('#setWaterReflect button').forEach(b => b.classList.toggle('on', b.dataset.q === settings.waterReflect));
+    document.querySelectorAll('#setRtx button').forEach(b => b.classList.toggle('on', b.dataset.q === settings.rtx));
+    document.querySelectorAll('#setSoftShadow button').forEach(b => b.classList.toggle('on', b.dataset.q === settings.softShadow));
     document.querySelectorAll('#setTexPack button').forEach(b =>
       b.classList.toggle('on', b.dataset.q === Tex.currentPackName()));
     document.querySelectorAll('#setItemPack button').forEach(b =>
@@ -4395,6 +4428,10 @@ const Game = (() => {
   document.querySelectorAll('#setItemPack button').forEach(b => {
     b.onclick = () => { Sound.play('uiClick'); Tex.setItemPack(b.dataset.q); refreshSettingsUI(); };
   });
+  bindOpt('setLightFx', 'lightFx');
+  bindOpt('setWaterReflect', 'waterReflect');
+  bindOpt('setRtx', 'rtx');
+  bindOpt('setSoftShadow', 'softShadow');
   $('btnImportZip').onclick = () => $('importPackZip').click();
   $('btnImportDir').onclick = () => $('importPackDir').click();
   $('importPackZip').onchange = async e => {
