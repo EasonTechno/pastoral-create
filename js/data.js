@@ -69,6 +69,13 @@ const BLOCKS = {
   trash:    { id: 67, name: '物品销毁机', hard: 1.0, machine: 'trash', tiles: { all: 'metal_dark', front: 'furnace_front' }, drops: [{ item: 'trash_b', n: 1 }] },
   filter:   { id: 68, name: '过滤器', hard: 0.9, machine: 'filter', tiles: { all: 'metal', front: 'vent' }, drops: [{ item: 'filter_b', n: 1 }] },
   chute:    { id: 69, name: '向漏斗', hard: 0.9, machine: 'chute', tiles: { all: 'metal_dark', top: 'storage_top' }, drops: [{ item: 'chute_b', n: 1 }] },
+  // ---- 工业扩展 ----
+  foundry:  { id: 70, name: '铸造炉', hard: 1.4, machine: 'furnace', tiles: { all: 'metal_dark', front: 'furnace_front' }, drops: [{ item: 'foundry_b', n: 1 }] },
+  smelter:  { id: 71, name: '精炼熔炉', hard: 1.4, machine: 'furnace', tiles: { all: 'metal', front: 'furnace_front' }, drops: [{ item: 'smelter_b', n: 1 }] },
+  iron_box: { id: 72, name: '加固箱', hard: 1.5, machine: 'chest', tiles: { all: 'metal', top: 'vent' }, drops: [{ item: 'iron_box_b', n: 1 }] },
+  vent_pipe:{ id: 73, name: '通风管道', hard: 1.1, tiles: { all: 'vent' }, drops: [{ item: 'vent_pipe_b', n: 1 }] },
+  cable_spool:{ id: 74, name: '电缆卷', hard: 1.0, tiles: { all: 'copper_block' }, drops: [{ item: 'cable_spool_b', n: 1 }] },
+  light_panel:{ id: 75, name: '工业灯板', hard: 0.8, tiles: { all: 'lamp_on' }, glow: true, drops: [{ item: 'light_panel_b', n: 1 }] },
 };
 const BLOCK_BY_ID = {};
 for (const k in BLOCKS){ BLOCKS[k].key = k; BLOCK_BY_ID[BLOCKS[k].id] = BLOCKS[k]; if (BLOCKS[k].solid === undefined) BLOCKS[k].solid = true; }
@@ -142,6 +149,13 @@ const ITEMS = {
   trash_b:    { name: '物品销毁机', cat: 'mach', iconBlock: 'trash', block: 'trash', stack: 20, desc: '丢进去的物品会被直接销毁，无法找回。', price: 60 },
   filter_b:   { name: '过滤器', cat: 'mach', iconBlock: 'filter', block: 'filter', stack: 20, desc: '只放行清单内的物品，其余物品继续留在传送带上。', price: 180 },
   chute_b:    { name: '向漏斗', cat: 'mach', iconBlock: 'chute', block: 'chute', stack: 20, desc: '把收到的物品垂直投递到下方容器/机器，可叠放接力。', price: 120 },
+  // ---- 工业扩展物品 ----
+  foundry_b:    { name: '铸造炉', cat: 'mach', iconBlock: 'foundry', block: 'foundry', stack: 50, desc: '升级版熔炉，冶炼更快更稳。', price: 160 },
+  smelter_b:    { name: '精炼熔炉', cat: 'mach', iconBlock: 'smelter', block: 'smelter', stack: 50, desc: '高效精炼金属，矿石利用率更高。', price: 220 },
+  iron_box_b:   { name: '加固箱', cat: 'mach', iconBlock: 'iron_box', block: 'iron_box', stack: 50, desc: '24 格加固存储，更耐工业环境。', price: 130 },
+  vent_pipe_b:  { name: '通风管道', cat: 'blk', iconBlock: 'vent_pipe', block: 'vent_pipe', stack: 250, desc: '工业管道装饰与通风。', price: 8 },
+  cable_spool_b:{ name: '电缆卷', cat: 'blk', iconBlock: 'cable_spool', block: 'cable_spool', stack: 250, desc: '铜电缆卷起的工业建材。', price: 14 },
+  light_panel_b:{ name: '工业灯板', cat: 'blk', iconBlock: 'light_panel', block: 'light_panel', stack: 100, desc: '发光的工业面板，照亮夜班。', price: 26 },
 };
 for (const k in ITEMS){ ITEMS[k].id = k; if (!ITEMS[k].stack) ITEMS[k].stack = 250; }
 
@@ -269,6 +283,13 @@ const RECIPES = [
   { id: 'shovel',  out: { shovel: 1 },   in: { iron: 1, planks_b: 2 },     where: 'both', time: 1.0 },
   // --- 精炼厂 / 便携 ---
   { id: 'carbon_x',out: { carbon: 3 },   in: { coal: 1 },                  where: 'refinery', time: 1.5 },
+  // --- 工业扩展配方 ---
+  { id: 'foundry_b',    out: { foundry_b: 1 },    in: { stone: 8, iron: 4, gear: 2 },        where: 'both', time: 5.0, tech: 'metallurgy' },
+  { id: 'smelter_b',    out: { smelter_b: 1 },    in: { stone: 6, copper: 4, circuit: 1 },   where: 'both', time: 5.0, tech: 'metallurgy' },
+  { id: 'iron_box_b',   out: { iron_box_b: 1 },   in: { iron: 4, planks_b: 4 },              where: 'both', time: 2.5 },
+  { id: 'vent_pipe_b',  out: { vent_pipe_b: 4 },  in: { iron: 3, stone: 2 },                 where: 'both', time: 2.0 },
+  { id: 'cable_spool_b',out: { cable_spool_b: 3 },in: { copper: 6, wire: 1 },                where: 'both', time: 2.5 },
+  { id: 'light_panel_b',out: { light_panel_b: 2 },in: { glass_b: 2, lamp_b: 1, wire: 2 },    where: 'both', time: 3.0 },
 ];
 const RECIPE_BY_ID = {}; RECIPES.forEach(r => RECIPE_BY_ID[r.id] = r);
 
@@ -347,7 +368,7 @@ BIOMES.redmoss.animal = { body: 0xc25a48, legs: 0x8a3a2c, eye: 0xffe8a0, count: 
 BIOMES.hive.animal    = { body: 0xd8862a, legs: 0x8a5210, eye: 0x1a1a1a, count: 10, name: '蜂窝守卫', type: 'strider' };
 
 // ================= 商品交易表 =================
-const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed'];
+const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed','vent_pipe_b','cable_spool_b','light_panel_b'];
 
 // ================= 任务线 =================
 // type: collect(拥有n个) / place / tech / farm(农田行为计数)
