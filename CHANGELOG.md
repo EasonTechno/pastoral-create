@@ -3,6 +3,10 @@
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
 ## [1.2.3] - 2026-08-16
+- 仓库治理：新增 `MAINTENANCE.md` / `CONTRIBUTING.md` 发布红线。
+- 清除第三方材质贴图（`assets/textures/` 下 3270 张 PNG）与 20MB 完整字体 `.ttf`（按红线不应提交）。
+- 恢复根 `README.md`（从远端原始提交原样找回，内容未改动），并加入 `.gitignore` 红线规则。
+- 后续提交统一作者：`deepseek-ai <deepseek-ai@users.noreply.github.com>`。
 - 工厂存档保存精确机器 blockKey，新工业方块读档后保持原外观。
 - 新增 6 个工业方块：铸造炉、精炼熔炉、加固箱、通风管道、电缆卷、工业灯板（含配方与集市交易）。
 - 新增环境光影设置：环境氛围光(增强)、水面反射、光追增强(近似)、柔和阴影，均带开关并持久化。
