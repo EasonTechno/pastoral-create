@@ -880,6 +880,19 @@ const Mods = (() => {
     },
     enabledIds(){ return config.mods.filter(m => m.enabled).map(m => m.id); },
     installedIds(){ return config.mods.map(m => m.id); },
+    get(id){
+      const rec = config.mods.find(m => m.id === id);
+      if (!rec) return null;
+      const rt = active.get(id);
+      return {
+        id, name: rec.name, version: rec.version, enabled: !!rec.enabled,
+        status: rec.enabled
+          ? (rt && !rt.ok ? 'error' : rt ? 'active' : 'pending')
+          : 'disabled',
+        installedAt: rec.installedAt || 0,
+        error: (rt && !rt.ok) ? rt.error : (rec.loadError || null),
+      };
+    },
     has(id){ return config.mods.some(m => m.id === id && m.enabled); },
     isEnabled(id){ return config.mods.some(m => m.id === id && m.enabled); },
     installFromFile, installFromEntries, uninstall, toggleEnabled, applySaveEnabled, restart,

@@ -210,6 +210,7 @@ PC.game;  // 运行时为 Game API，启动早期为 null
 ### 版本兼容
 
 - `Mods.installedIds()` → 所有已安装模组 id（不论启停）。
+- `Mods.get(id)` → 返回该模组的信息与状态（name/version/enabled/status/installedAt/error）。
 - `Mods.has(id)` / `Mods.isEnabled(id)` → 是否已安装并启用
 - `Mods.version` → 当前游戏版本（如 `1.2.12`），模组可在启动时做兼容判断。
 - `PC.game.version` / `Game.version` → 同样返回游戏版本。
