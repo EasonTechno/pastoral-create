@@ -1558,7 +1558,8 @@ const UI = (() => {
     const p = Factory.power;
     const pt = $('powerText');
     if (pt){
-      pt.textContent = `${p.gen}/${p.use} kW`;
+      const bs = Factory.batteryStore ? Factory.batteryStore() : 0;
+      pt.textContent = bs > 0 ? `${p.gen}/${p.use} kW · ⚡${Math.round(bs)}` : `${p.gen}/${p.use} kW`;
       pt.style.color = p.sat < 1 ? '#ff5555' : '#ffb347';
     }
     const eco = $('ecoCredits');

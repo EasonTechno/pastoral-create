@@ -1313,8 +1313,13 @@ const Factory = (() => {
     scene.add(itemGroup);
   }
 
+  function batteryStore(){
+    let s = 0;
+    for (const m of machines.values()) if (m.type === 'battery') s += m.data && m.data.store || 0;
+    return s;
+  }
   return { init, place, remove, at, update, serialize, deserialize, reset,
     canMachineAccept, machineInsert,
-    get power(){ return power; }, get machines(){ return machines; }, DIRS };
+    get power(){ return power; }, get machines(){ return machines; }, batteryStore, DIRS };
 })();
 window.Factory = Factory;
