@@ -399,11 +399,14 @@ const Factory = (() => {
       case 'trash': return { destroyed: 0 };
       case 'filter': return { list: null, out: null };   // list=null 全部放行
       case 'chute': return { buffer: null };
+      case 'battery': return { store: 0 };
       default: return {};
     }
   }
   const POWER_USE = { miner: 8, assembler: 12, refinery: 20, irrigator: 6, planter: 8, harvester: 10, sellbot: 2, vendor: 4 };
   const POWER_GEN = { solar: 10, reactor: 100, burner: 25 };
+  const BATTERY_CAP = 400;   // 单格储能电池容量（kW·s）
+  const BATTERY_RATE = 60;   // 充/放电速率（kW）
 
   // ---------- 放置 / 拆除 ----------
   function place(x, y, z, blockKey, dir){
@@ -1063,6 +1066,21 @@ const Factory = (() => {
       if (m.type === 'reactor' && m.data.fuel > 0){ gen += POWER_GEN.reactor; m.data.fuel -= dt; m.active = true; }
       else if (m.type === 'reactor') m.active = false;
       if (POWER_USE[m.type]) use += POWER_USE[m.type];
+    }
+    // 储能电池：盈余充电 / 缺电放电，稳定电网
+    const batteries = [...machines.values()].filter(m => m.type === 'battery');
+    if (gen >= use){
+      let budget = gen - use;
+      for (const b of batteries){
+        const take = Math.min(budget, BATTERY_RATE * dt, BATTERY_CAP - b.data.store);
+        if (take > 0){ b.data.store += take; budget -= take; b.active = true; } else b.active = false;
+      }
+    } else {
+      let deficit = use - gen;
+      for (const b of batteries){
+        const give = Math.min(deficit, BATTERY_RATE * dt, b.data.store);
+        if (give > 0){ b.data.store -= give; deficit -= give; gen += give; b.active = true; } else b.active = false;
+      }
     }
     const sat = use > 0 ? Math.min(1, gen / use) : 1;
     power = { gen: Math.round(gen), use, sat };
