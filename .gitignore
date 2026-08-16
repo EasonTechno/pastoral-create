@@ -21,3 +21,11 @@ node_modules/
 .rollback/
 .agents/
 .dsh-vision-toolkit/
+
+# 版权红线：第三方材质贴图严禁提交（玩家自行导入）
+assets/textures/**/*.png
+assets/textures/**/*.jpg
+assets/textures/**/*.jpeg
+assets/textures/**/*.gif
+# 大体积非必要字体（仅保留 woff2 子集）
+assets/fonts/*.ttf
