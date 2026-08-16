@@ -60,6 +60,18 @@ const World = (() => {
   let savedMods = null;         // 存档中被修改过的区块 {key: rle}
   let group = null;
   let noise = null, biome = null, seed = 0;
+  let planetBiome = null;       // 星球主群系（lush 星球启用区域混合）
+  let farmCore = null;          // 出生农庄中心（lush 核心，出生地保持现状）
+  const LUSH_CORE = 256;        // lush 核心半径（格）
+  const NO_BEACH_KEYS = ['sand','basalt','ash','salt','obsidian','rust','hive','amber'];
+  function biomeAt(x, z){
+    if (!planetBiome || planetBiome.grass !== 'grass') return biome;   // 非 lush 星球保持单一群系
+    if (!farmCore) return biome;
+    const dx = x - farmCore.x, dz = z - farmCore.z;
+    if (dx * dx + dz * dz < LUSH_CORE * LUSH_CORE) return BIOMES.lush;
+    const n = noise.n2(x * 0.0032, z * 0.0032);   // 低噪自然混杂：沙漠约 40%
+    return n < -0.12 ? BIOMES.desert : BIOMES.lush;
+  }
 
   const solidMat = new THREE.MeshLambertMaterial({ map: Tex.texture, vertexColors: true, transparent: false, alphaTest: 0.4, side: THREE.DoubleSide });
   const waterMat = new THREE.MeshLambertMaterial({ map: Tex.texture, transparent: true, opacity: 0.72, side: THREE.DoubleSide });
@@ -270,9 +282,10 @@ const World = (() => {
   }
   function treeAt(wx, wz){
     const r = hash2(wx, wz, 0xABCD);
-    if (r() >= biome.trees) return null;
+    const b = biomeAt(wx, wz);
+    if (r() >= b.trees) return null;
     const h = heightAt(wx, wz);
-    if (h <= SEA + (biome.seaLift || 0)) return null;
+    if (h <= SEA + (b.seaLift || 0)) return null;
     return { h, th: 4 + (r() * 3) | 0, rng: r };
   }
 
@@ -291,6 +304,7 @@ const World = (() => {
         const x = ((rnd() * 1300) | 0) - 650;
         const z = ((rnd() * 440) | 0) - 220;
         if (!onLand(x, z)) continue;
+        if (biomeAt(x, z) !== BIOMES.lush) continue;   // 村庄只在 lush 区
         if (structures.some(s => (s.x - x) * (s.x - x) + (s.z - z) * (s.z - z) < 240 * 240)) continue;
         const huts = [];
         const n = 4 + ((rnd() * 3) | 0);
@@ -314,6 +328,7 @@ const World = (() => {
         const gh = heightAt(tx, tz);
         if (gh > SEAB + 1){ farmX = tx; farmZ = tz; farmH = gh; break; }
       }
+      farmCore = { x: farmX, z: farmZ };
       structures.push({ type: 'farm', x: farmX, z: farmZ, h: farmH });
     } else {
       // 危险星球：先民遗迹（三种形态）
@@ -481,16 +496,17 @@ const World = (() => {
       return c;
     }
 
-    const grassId = BLOCKS[biome.grass].id, dirtId = BLOCKS[biome.dirt].id;
-    const deepId = BLOCKS[biome.deep].id, stoneId = BLOCKS.stone.id;
+    const stoneId = BLOCKS.stone.id;
     const x0 = cx * CHUNK, z0 = cz * CHUNK;
-    const SEAB = SEA + (biome.seaLift || 0);
-    const noBeach = ['sand','basalt','ash','salt','obsidian','rust','hive','amber'].includes(biome.grass);
 
-    // 地层 + 水 + 花草 + 露头矿
+    // 地层 + 水 + 花草 + 露头矿（逐列取区域群系）
     for (let lz = 0; lz < CHUNK; lz++){
       for (let lx = 0; lx < CHUNK; lx++){
         const wx = x0 + lx, wz = z0 + lz;
+        const b = biomeAt(wx, wz);
+        const grassId = BLOCKS[b.grass].id, dirtId = BLOCKS[b.dirt].id, deepId = BLOCKS[b.deep].id;
+        const SEAB = SEA + (b.seaLift || 0);
+        const noBeach = NO_BEACH_KEYS.includes(b.grass);
         const h = heightAt(wx, wz);
         const canCave = h > SEAB + 1;      // 近水岸不挖洞，避免悬空水
         for (let y = 0; y <= h; y++){
@@ -504,7 +520,7 @@ const World = (() => {
           if (canCave && y >= 3 && y <= h - 3 && isCave(wx, y, wz)) id = 0;
           c.data[lidx(lx, y, lz)] = id;
         }
-        if (h < SEAB && !biome.dry && biome.grass !== 'basalt'){
+        if (h < SEAB && !b.dry && b.grass !== 'basalt'){
           for (let y = h + 1; y <= SEAB; y++) c.data[lidx(lx, y, lz)] = BLOCKS.water.id;
         }
         // 列级装饰（确定性）
@@ -515,7 +531,7 @@ const World = (() => {
             const oid = cr() < 0.5 ? BLOCKS.iron_ore.id : BLOCKS.copper_ore.id;
             c.data[lidx(lx, h, lz)] = oid;
             if (cr() < 0.6 && h > 1) c.data[lidx(lx, h - 1, lz)] = oid;
-          } else if (biome.crystals && rv < 0.0015 + biome.crystals){
+          } else if (b.crystals && rv < 0.0015 + b.crystals){
             // 氚晶簇尖塔
             const ch = 1 + ((cr() * 3) | 0);
             for (let y = 1; y <= ch && h + y < WORLD_H; y++)
@@ -536,7 +552,8 @@ const World = (() => {
       { id: BLOCKS.uranium_ore.id, exp: 0.11, size: 4, yMin: 2, yMax: 12 },
     ];
     for (const ore of ores){
-      const expc = ore.exp * biome.oreMul;
+      const b8 = biomeAt(x0 + 8, z0 + 8);
+      const expc = ore.exp * b8.oreMul;
       let n = Math.floor(expc) + (rng() < (expc % 1) ? 1 : 0);
       while (n-- > 0){
         let lx = (rng() * CHUNK) | 0, lz = (rng() * CHUNK) | 0;
@@ -545,7 +562,7 @@ const World = (() => {
         for (let v = 0; v < veinSize; v++){
           if (lx >= 0 && lx < CHUNK && lz >= 0 && lz < CHUNK && y > 0 && y < WORLD_H){
             const cur = c.data[lidx(lx, y, lz)];
-            if (cur === stoneId || cur === deepId) c.data[lidx(lx, y, lz)] = ore.id;
+            if (cur === stoneId || cur === BLOCKS[b8.deep].id) c.data[lidx(lx, y, lz)] = ore.id;
           }
           lx += (rng() * 3 - 1) | 0; y += (rng() * 3 - 1) | 0; lz += (rng() * 3 - 1) | 0;
         }
@@ -559,7 +576,7 @@ const World = (() => {
         const t = treeAt(wx, wz);
         if (!t) continue;
         const { h, th, rng: tr } = t;
-        if (biome.mushroom){
+        if (biomeAt(wx, wz).mushroom){
           // 巨型蘑菇：菌柄 + 宽菌盖
           if (lx >= 0 && lx < CHUNK && lz >= 0 && lz < CHUNK){
             for (let y = 1; y <= th; y++)
@@ -1079,16 +1096,16 @@ const World = (() => {
     return h;
   }
   // 纯噪声地表颜色（不生成区块）：把整颗星球的体素地形“模拟渲染”到球面贴图
-  const NO_BEACH = ['sand', 'basalt', 'ash', 'salt', 'obsidian', 'rust', 'hive', 'amber'];
   function mapColorRGB(x, z){
     if (!noise || !biome) return [90, 90, 90];
+    const b = biomeAt(x, z);
     const h = heightAt(Math.floor(x), Math.floor(z));
-    const SEAB = SEA + (biome.seaLift || 0);
+    const SEAB = SEA + (b.seaLift || 0);
     let def, y;
-    if (h < SEAB && !biome.dry && biome.grass !== 'basalt'){
+    if (h < SEAB && !b.dry && b.grass !== 'basalt'){
       def = BLOCKS.water; y = SEAB;
     } else {
-      def = (h < SEAB + 1 && !NO_BEACH.includes(biome.grass)) ? BLOCKS.sand : BLOCKS[biome.grass];
+      def = (h < SEAB + 1 && !NO_BEACH_KEYS.includes(b.grass)) ? BLOCKS.sand : BLOCKS[b.grass];
       y = h;
     }
     const col = tileAvgColor(tileFor(def, 2));
@@ -1328,6 +1345,8 @@ const World = (() => {
     dispose();
     seed = worldSeed;
     biome = BIOMES[biomeKey];
+    planetBiome = biome;
+    farmCore = null;
     noise = makeNoise(worldSeed);
     savedMods = mods || null;
     chunks = new Map();

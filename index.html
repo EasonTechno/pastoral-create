@@ -8,10 +8,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#6f4c24">
+<meta name="game-version" content="1.1.0">
 <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
 <link rel="icon" href="data:,">
 <title>发条农庄 — 田园种田工业</title>
-<link rel="stylesheet" href="css/style.css?v=pc644">
+<link rel="stylesheet" href="css/style.css?v=f6e5bfa8">
 </head>
 <body>
 <canvas id="game"></canvas>
@@ -21,7 +22,7 @@
   <div class="boot-veil"></div>
   <div class="boot-inner">
     <div class="boot-logo">
-      <img class="boot-icon-img" src="assets/icons/game-icon.png?v=1" alt="发条农庄">
+      <img class="boot-icon-img" src="assets/icons/game-icon.png?v=c74c7108" alt="发条农庄">
       <h1>Pastoral Create</h1>
       <h2>发 条 农 庄</h2>
       <div class="boot-sub">种田 · 灌溉 · 传送带 · 自动化农场</div>
@@ -31,10 +32,12 @@
   <button id="btnContinue" class="boot-btn" disabled>↻ 继续游戏</button>
   <button id="btnAccount" class="boot-btn">♙ 云端账号</button>
       <button id="btnSettingsBoot" class="boot-btn">⚙ 画面设置</button>
+      <button id="btnModsBoot" class="boot-btn">📦 模组管理</button>
       <button id="btnHelp" class="boot-btn">? 操作指南</button>
     </div>
     <div class="boot-tip" id="bootTip">「锄头翻开泥土，种子落进耕地，日子就有了盼头。」</div>
   </div>
+  <div class="boot-version">Pastoral Create v<span id="bootVer"></span></div>
   <div class="scanline"></div>
 </div>
 
@@ -84,7 +87,7 @@
       <div class="mobile-menu-head">田园工具</div>
       <div class="mobile-menu-actions">
         <button id="mnuInventory">背包</button><button id="mnuQuest">任务</button><button id="mnuTech">科技</button><button id="mnuBreed">选育</button>
-        <button id="mnuEncy">图鉴</button><button id="mnuMap">地图</button><button id="mnuTrade">集市</button><button id="mnuPause">暂停</button>
+        <button id="mnuEncy">图鉴</button><button id="mnuMap">地图</button><button id="mnuTrade">集市</button><button id="mnuMods">模组</button><button id="mnuPause">暂停</button>
       </div>
     </div>
   </div>
@@ -234,6 +237,7 @@
     <button class="boot-btn" id="btnResume">继续游戏</button>
     <button class="boot-btn" id="btnSave">存档</button>
     <button class="boot-btn" id="btnSettings">画面设置</button>
+    <button class="boot-btn" id="btnMods">📦 模组管理</button>
     <button class="boot-btn" id="btnHelp2">操作指南</button>
     <button class="boot-btn" id="btnQuit">返回主菜单</button>
     <div class="pause-vol">音量 <input type="range" id="volSlider" min="0" max="100" value="70"></div>
@@ -325,8 +329,36 @@
   </div>
 </div>
 
+<!-- ====== 模组管理 ====== -->
+<div id="modsPanel" class="panel hidden wide">
+  <div class="panel-head"><span>📦 模组管理</span><span class="head-info" id="modsCount"></span><button class="pclose" data-close="modsPanel">✕</button></div>
+  <div class="panel-body mods-body">
+    <div class="mods-toolbar">
+      <button id="btnInstallMod" class="boot-btn small">＋ 安装 Mod 包</button>
+      <button id="btnModsReload" class="boot-btn small">↻ 重启并生效</button>
+      <span class="mods-warn">仅安装可信来源的 .pcmod / .zip；模组脚本拥有与游戏相同的权限。</span>
+    </div>
+    <div id="modsList"></div>
+    <div class="mods-hint">开发模组请阅读 <b>docs/mods.md</b>：包格式、数据注册、贴图与 Mods API 说明。</div>
+  </div>
+</div>
+
+<input type="file" id="modFile" accept=".zip,.pcmod" style="display:none">
 <input type="file" id="importPackZip" accept=".zip" style="display:none">
 <input type="file" id="importPackDir" webkitdirectory multiple style="display:none">
+
+<!-- ====== 新版本更新提示 ====== -->
+<div id="pwaUpdate" class="panel hidden">
+  <div class="panel-head"><span>◈ 游戏更新</span><button class="pclose" data-close="pwaUpdate">✕</button></div>
+  <div class="panel-body update-body">
+    <div class="update-icon">⬆</div>
+    <p class="update-text">新版本已下载完成，点击「立即更新」刷新进入最新版本（当前进度与存档不受影响）。</p>
+    <div class="update-actions">
+      <button id="btnPwaReload" class="boot-btn">立即更新</button>
+      <button id="btnPwaLater" class="boot-btn small">稍后再说</button>
+    </div>
+  </div>
+</div>
 
 <!-- RPG 对话框 -->
 <div id="dialogBox" class="hidden">
@@ -360,27 +392,92 @@ window.addEventListener('unhandledrejection', e => {
   console.error('[GAME PROMISE ERROR]', e.reason && (e.reason.stack || e.reason.message || e.reason));
 });
 </script>
-<script src="js/three.min.js?v=st85"></script>
-<script src="js/SVGLoader.js?v=st85"></script>
-<script src="js/textures.js?v=pc12"></script>
-<script src="js/audio.js?v=st85"></script>
-<script src="js/data.js?v=pc14"></script>
-<script src="js/farm.js?v=pc7"></script>
-<script src="js/world.js?v=pc30"></script>
-<script src="js/factory.js?v=pc207"></script>
-<script src="js/player.js?v=pc15"></script>
-<script src="js/ui.js?v=pc615"></script>
-<script src="js/main.js?v=pc642"></script>
-<script src="js/cloud.js?v=pc4"></script>
+<script src="js/three.min.js?v=7a7802bf"></script>
+<script src="js/SVGLoader.js?v=97b559f9"></script>
+<script src="js/textures.js?v=d716db92"></script>
+<script src="js/audio.js?v=19491e11"></script>
+<script src="js/data.js?v=376afdef"></script>
+<script src="js/mods.js?v=2f585663"></script>
+<script src="js/farm.js?v=40b7895d"></script>
+<script src="js/world.js?v=4ae4bdfd"></script>
+<script src="js/factory.js?v=4c47c3f3"></script>
+<script src="js/player.js?v=c7674980"></script>
+<script src="js/ui.js?v=c39a2055"></script>
+<script src="js/main.js?v=f189e557"></script>
+<script src="js/cloud.js?v=48890f96"></script>
 <script>
 console.log('发条农庄 · 田园种田工业');
 </script>
 <script>
-/* PWA 注册：失败静默回退，绝不影响游戏启动（不等 load，立即注册） */
+/* boot 底部版本号：单一来源 meta[name=game-version]，发版时只需改那一处 */
+(function(){
+  var m = document.querySelector('meta[name="game-version"]');
+  var el = document.getElementById('bootVer');
+  if (m && el) el.textContent = m.content;
+})();
+</script>
+<script>
+/* PWA：缓存优先 + 新版本弹窗更新
+   1) 页面始终从缓存快速启动（离线/弱网可用），后台静默换新缓存；
+   2) 检测到新版本（SW 更新完成且页面已受控）→ 弹窗；
+   3) 点「立即更新」→ 通知 SW 接管 → 自动刷新到新版本；
+      点「稍后再说」→ 1 小时内不再打扰，刷新页面后仍会再次提示。 */
 (function(){
   if (!('serviceWorker' in navigator)) return;
   if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
-  navigator.serviceWorker.register('sw.js').catch(function(){});
+  var reg = null;
+  var userClicked = false;   // 仅用户点过「立即更新」后，controllerchange 才刷新
+  var dismissUntil = 0;
+  try { dismissUntil = Number(localStorage.getItem('pastoral_pwa_dismiss') || 0); } catch(e){}
+  var updateEl = document.getElementById('pwaUpdate');
+  var reloadBtn = document.getElementById('btnPwaReload');
+  var laterBtn = document.getElementById('btnPwaLater');
+
+  function showUpdate(){
+    if (!updateEl || !reloadBtn) return;
+    if (Date.now() < dismissUntil) return;
+    if (!updateEl.classList.contains('hidden')) return;
+    updateEl.classList.remove('hidden');
+    try { if (window.Sound) Sound.play('questNew'); } catch(e){}
+  }
+
+  reloadBtn.onclick = function(){
+    userClicked = true;
+    try {
+      if (reg && reg.waiting){ reg.waiting.postMessage({ type: 'SKIP_WAITING' }); return; }
+    } catch(e){}
+    location.reload();   // 兜底：无 waiting 时直接刷新
+  };
+  laterBtn.onclick = function(){
+    try { localStorage.setItem('pastoral_pwa_dismiss', String(Date.now() + 3600e3)); } catch(e){}
+    if (updateEl) updateEl.classList.add('hidden');
+  };
+
+  function onNewSW(sw){
+    sw.addEventListener('statechange', function(){
+      // 新 SW 安装完成且页面已被旧 SW 控制 → 有新版本可更新
+      if (sw.state === 'installed' && navigator.serviceWorker.controller) showUpdate();
+    });
+  }
+
+  navigator.serviceWorker.register('sw.js?v=efc5db45').then(function(r){
+    reg = r;
+    // 已有等待激活的新版（上次点过「稍后」或刷新前已下载）→ 补弹
+    if (r.waiting && navigator.serviceWorker.controller) showUpdate();
+    r.addEventListener('updatefound', function(){
+      var nw = r.installing;
+      if (nw) onNewSW(nw);
+    });
+    // 回到前台时后台检查一次更新（长会话也能发现新版）
+    document.addEventListener('visibilitychange', function(){
+      if (document.visibilityState === 'visible') r.update().catch(function(){});
+    });
+  }).catch(function(){});
+
+  // 仅用户确认后：新 SW 接管 → 刷新页面
+  navigator.serviceWorker.addEventListener('controllerchange', function(){
+    if (userClicked) location.reload();
+  });
 })();
 </script>
 </body>

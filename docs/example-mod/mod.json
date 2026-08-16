@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "example.glowing_brick",
+  "name": "示例：荧光砖与萤石粉",
+  "version": "1.0.0",
+  "author": "发条农庄开发者",
+  "description": "演示方块/物品/配方/任务/钩子的最小可安装模组。",
+  "gameVersion": ">=1.1.0",
+  "script": "main.js",
+  "data": {
+    "blocks": {
+      "glow_brick": {
+        "name": "荧光砖",
+        "tiles": { "all": "amber" },
+        "hard": 1.4,
+        "glow": true,
+        "drops": [{ "item": "glow_dust", "n": 1 }],
+        "item": { "stack": 250, "price": 14 }
+      }
+    },
+    "items": {
+      "glow_dust": {
+        "name": "萤石粉",
+        "cat": "mat",
+        "iconBlock": "crystal",
+        "stack": 250,
+        "price": 10,
+        "desc": "会发光的细粉，来自荧光砖。"
+      }
+    },
+    "recipes": [
+      {
+        "id": "glow_brick_recipe",
+        "out": { "glow_brick": 2 },
+        "in": { "glow_dust": 2, "stone": 4 },
+        "where": "both",
+        "time": 1.8
+      }
+    ],
+    "quests": [
+      { "id": "q_glow_brick", "title": "点亮一角", "desc": "合成 2 块荧光砖", "type": "collect", "item": "glow_brick", "n": 2 }
+    ]
+  }
+}

@@ -99,6 +99,7 @@ const Net = (() => {
       dropMult: Game.dropMult,
       galaxySeed: Space.getCurrentGalaxySeed(),
       mods: World.serialize().mods,
+      modData: window.Mods ? Mods.serializeData() : null,
       machines: Factory.serialize(),
     };
   }

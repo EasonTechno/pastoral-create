@@ -80,6 +80,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
 .boot-sub{margin-top:16px;color:#7C9A46;letter-spacing:.2em;font-size:12px;animation:bootFadeUp .5s ease .85s both}
 .boot-menu{margin:0;order:1;display:flex;flex-direction:column;gap:12px;width:min(300px,36vw);animation:bootSlideLeft .55s ease .95s both}
 .boot-tip{margin-top:32px;color:#7C9A46;font-style:italic;font-size:13px;min-height:20px;opacity:.9;animation:bootFadeUp .5s ease 1.2s both}
+.boot-version{position:absolute;left:0;right:0;bottom:calc(10px + env(safe-area-inset-bottom));z-index:3;text-align:center;color:#8A9B6E;font-size:11px;letter-spacing:.12em;font-weight:500;text-shadow:1px 1px 0 rgba(255,255,255,.5);animation:bootFadeUp .5s ease 1.4s both;pointer-events:none}
 .boot-ver{color:#A8BB7E;font-size:10px;padding:3px 10px}
 @media (prefers-reduced-motion:reduce){.boot-veil,.boot-sprout,.boot-icon-img,.boot-logo h1,.boot-logo h2,.boot-sub,.boot-menu,.boot-tip{animation:none!important}.boot-veil{display:none}}
 /* 主页按钮：星露谷斜面 */
@@ -450,6 +451,35 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
 .help-col h3{color:var(--leaf-dk);font-weight:700;letter-spacing:.08em;margin-bottom:8px;font-size:14px;border-bottom:2px dashed var(--frame);padding-bottom:4px}
 .help-col p{font-size:13px;color:var(--ink);margin:6px 0;line-height:1.5}
 .help-col b{color:var(--leaf-dk);background:var(--leaf-bg);padding:0 5px;border:1px solid var(--leaf-dk)}
+.mods-body{display:flex;flex-direction:column;gap:10px}
+.mods-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mods-warn{flex:1;min-width:220px;font-size:11px;color:var(--ink-2);line-height:1.5}
+.mods-hint{margin-top:auto;font-size:11px;color:var(--ink-3);border-top:2px dashed var(--frame);padding-top:8px;line-height:1.5}
+#modsList{display:flex;flex-direction:column;gap:7px;min-height:120px}
+.mods-empty{text-align:center;color:var(--ink-3);padding:26px 12px;background:var(--cream-2);border:2px dashed var(--frame)}
+.mods-empty b{display:block;color:var(--ink-2);font-size:14px;margin-bottom:8px}
+.mods-empty p{font-size:12px;line-height:1.6}
+.mods-errors{display:flex;flex-direction:column;gap:5px;padding:8px;background:var(--danger-bg);border:2px solid var(--danger);font-size:11px;color:var(--danger-dk);line-height:1.5}
+.mod-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:9px 10px;background:var(--cream-hi);border:2px solid var(--frame);box-shadow:var(--bevel-up),var(--px-edge-2)}
+.mod-row:hover{border-color:var(--leaf-dk);background:var(--leaf-bg)}
+.mod-icon{width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--cream-2);border:2px solid var(--frame);box-shadow:var(--bevel-up);font-size:20px}
+.mod-info{min-width:0}
+.mod-name{font-size:13px;font-weight:700;color:var(--ink)}
+.mod-meta{font-size:11px;color:var(--ink-2);margin-top:3px;line-height:1.4;word-break:break-all}
+.mod-loadstate{font-size:10px;color:var(--danger);margin-top:3px;line-height:1.4}
+.mod-status{font-size:11px;font-weight:700;padding:4px 8px;border:2px solid var(--edge);white-space:nowrap}
+.mod-status.on{background:var(--leaf-bg);color:var(--leaf-dk)}
+.mod-status.off{background:var(--cream-2);color:var(--ink-3)}
+.mod-status.error{background:var(--danger-bg);color:var(--danger-dk)}
+.mod-actions{display:flex;gap:6px}
+.boot-btn.small.danger{background:linear-gradient(180deg,#E8A096 0 2px,#C96A5A 2px 46%,#A5483A 46% 54%,#C96A5A 54% 100%);color:#FFF6E3}
+.boot-btn.small.danger:hover{background:var(--band-gold);color:var(--ink)}
+@media (pointer:coarse),(max-width:900px){
+  .mod-row{grid-template-columns:38px minmax(0,1fr) auto;gap:7px}
+  .mod-status{grid-column:2}
+  .mod-actions{grid-column:3;grid-row:1/span 2;flex-direction:column}
+  .mod-icon{width:32px;height:32px;font-size:17px}
+}
 .pause-body{display:flex;flex-direction:column;gap:12px;width:min(280px,90vw)}
 .pause-vol{font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:8px;margin-top:10px}
 .pause-vol input{flex:1}
@@ -576,8 +606,8 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
 /* 移动端面板全屏（去掉切角与阴影） */
 @media (pointer:coarse),(max-width:900px){
   .panel,.panel.wide{position:fixed;inset:0;top:auto;left:auto;transform:none;width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;clip-path:none;filter:none;box-shadow:none}
-  .panel-head{min-height:48px;padding:12px 22px;padding-right:88px;border-radius:24px 24px 0 0}
-  .pclose{position:absolute;top:0;right:0;width:80px;height:48px;margin-left:0;border:0;border-left:2px solid var(--edge);border-bottom:2px solid var(--edge);background:var(--band-face);box-shadow:none;border-radius:24px 24px 24px 24px;font-size:16px;z-index:5;display:flex;align-items:center;justify-content:flex-start;padding-left:24px}
+  .panel-head{min-height:48px;padding:12px 22px;padding-right:74px;border-radius:24px 24px 0 0}
+  .pclose{position:absolute;top:calc(7px + env(safe-area-inset-top));right:calc(12px + env(safe-area-inset-right));width:56px;height:34px;margin-left:0;border:2px solid var(--edge);background:var(--band-face);box-shadow:var(--bevel-up);border-radius:999px;font-size:15px;line-height:1;z-index:5;display:flex;align-items:center;justify-content:center;padding:0}
   .pclose:active{transform:translateY(2px)}
   .panel-body{height:calc(100dvh - 48px);max-height:calc(100dvh - 48px)}
 }
@@ -623,4 +653,15 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
 @media (max-width:900px) and (orientation:portrait){
   #wsRight .craft-list{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
   #infoCorner{top:var(--corner-inset,0px);left:var(--corner-inset,0px);width:auto}
+}
+
+/* ============ 新版本更新弹窗：始终小窗居中（不被移动端全屏规则拉伸） ============ */
+#pwaUpdate{width:min(420px,92vw);height:auto;max-height:64vh;align-items:flex-start}
+#pwaUpdate .update-body{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:18px 20px}
+.update-icon{font-size:34px;line-height:1;color:var(--leaf-dk)}
+.update-text{color:var(--ink);font-size:13px;line-height:1.7}
+.update-actions{display:flex;align-items:center;gap:10px;margin-top:6px}
+@media (pointer:coarse),(max-width:900px){
+  #pwaUpdate{inset:auto;top:50%;left:50%;transform:translate(-50%,-50%);width:min(400px,92vw);height:auto;max-height:64vh;clip-path:var(--cut);filter:drop-shadow(3px 3px 0 rgba(46,26,10,.35));border-radius:0}
+  #pwaUpdate .panel-head{padding-right:64px}
 }

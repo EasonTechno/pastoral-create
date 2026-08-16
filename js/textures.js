@@ -21,6 +21,8 @@ const Tex = (() => {
   const ctx = canvas.getContext('2d');
   const index = {}; // name -> tile index
   const tilePainters = {}; // name -> {painter, seed}（程序化底稿，回退用）
+  const modTileNames = new Set();   // 模组动态分配的 tile 名
+  const modTileImages = new Map();  // 模组 tile 的当前图像（重新加载材质包后恢复用）
   let cursor = 0;
 
   // --- 小工具 ---
@@ -57,6 +59,44 @@ const Tex = (() => {
     const ox = (i % COLS) * TS, oy = ((i / COLS) | 0) * TS;
     ctx.clearRect(ox, oy, TS, TS);
     rec.painter(makePX(ox, oy), mulberry32(rec.seed || (i * 7919 + 13)), { ox, oy });
+  }
+  // ---- 模组 tile：在 256 格图集里动态申请空位，先画占位、后用模组贴图覆盖 ----
+  function nameHash(name){
+    let h = 2166136261;
+    for (let i = 0; i < name.length; i++){ h ^= name.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return h >>> 0;
+  }
+  function paintModPlaceholder(name){
+    const i = index[name];
+    if (i === undefined) return;
+    const ox = (i % COLS) * TS, oy = ((i / COLS) | 0) * TS;
+    const base = ['#7d5fb8','#4e8a5a','#b07a3a','#3f7d9a','#a34a4a'][nameHash(name) % 5];
+    ctx.fillStyle = base; ctx.fillRect(ox, oy, TS, TS);
+    ctx.fillStyle = shade(base, 0.72);
+    for (let y = 0; y < TS; y++) for (let x = 0; x < TS; x++)
+      if (((x + y) & 1) === 0) ctx.fillRect(ox + x, oy + y, 1, 1);
+  }
+  function allocTile(name){
+    if (index[name] !== undefined) return index[name];
+    if (cursor >= COLS * COLS) throw new Error('贴图图集已满（256 格），无法再添加模组贴图');
+    const i = cursor++;
+    index[name] = i;
+    modTileNames.add(name);
+    paintModPlaceholder(name);
+    return i;
+  }
+  function hasTile(name){ return index[name] !== undefined; }
+  function setTileImage(name, img){
+    allocTile(name);
+    modTileImages.set(name, img);
+    drawTileFromImage(name, img);
+  }
+  function reapplyModTiles(){
+    for (const name of modTileNames){
+      const img = modTileImages.get(name);
+      if (img) drawTileFromImage(name, img);
+      else paintModPlaceholder(name);
+    }
   }
   const pal = (base, n = 4, spread = 0.16) => {
     const arr = [];
@@ -613,6 +653,7 @@ const Tex = (() => {
         } catch(e){ /* 缺图保留中性缺失块 */ }
       }));
     }
+    reapplyModTiles();
     refreshTextureUses();
     if (typeof Icons !== 'undefined' && Icons.loadPack) await Icons.loadPack(savedItemPackName());
   }
@@ -729,7 +770,8 @@ const Tex = (() => {
   return { canvas, ctx, TS, COLS, index, texture, tileTexture, tileCanvas, shade,
     resetPackTiles, loadPack, setPack, applySavedPack, currentPackName, savedPackName,
     setItemPack, applySavedItemPack, savedItemPackName, loadImage,
-    importFiles, readZip, tileNames,
+    importFiles, readZip, tileNames, hasTile, addTile: allocTile, setTileImage,
+    refreshTextureUses,
     uvRect(name){
       const i = index[name];
       const u = (i % COLS) / COLS, v = 1 - (((i / COLS) | 0) + 1) / COLS;
@@ -746,6 +788,7 @@ const Tex = (() => {
 const Icons = (() => {
   const cache = {};
   const itemCache = {};
+  const modItemIcons = {};   // itemId -> canvas（模组自定义图标，随材质包重载自动恢复）
   // 每个物品都映射到 Whimscape 材质包里的真实 PNG（item 或 block）。
   // 找不到对应物品时，方块物品用 Whimscape 方块贴图，绝不回退到程序化手绘。
   const ITEM_ICON_MAP = {
@@ -1012,6 +1055,16 @@ const Icons = (() => {
     ctx.drawImage(img, 0, 0, img.naturalWidth || img.width, img.naturalHeight || img.height, 0, 0, 32, 32);
     return c;
   }
+  function setItemIcon(itemId, img){
+    modItemIcons[itemId] = iconFromImage(img);
+    itemCache[itemId] = modItemIcons[itemId];
+    clearCache();
+    if (typeof UI !== 'undefined' && UI.refreshAll) UI.refreshAll();
+  }
+  function applyModIcons(){
+    for (const id in modItemIcons) itemCache[id] = modItemIcons[id];
+    clearCache();
+  }
   function blockIconFromImages(topImg, sideImg, frontImg){
     const c = newC(); const ctx = c.getContext('2d');
     ctx.imageSmoothingEnabled = false;
@@ -1033,6 +1086,19 @@ const Icons = (() => {
   function get(itemId){
     if (cache[itemId]) return cache[itemId];
     if (itemCache[itemId]) return itemCache[itemId];
+    const it = (typeof ITEMS !== 'undefined' && ITEMS && ITEMS[itemId]) || null;
+    if (it && it.iconBlock){
+      const tiles = BLOCKS && BLOCKS[it.iconBlock] && BLOCKS[it.iconBlock].tiles;
+      if (typeof Tex !== 'undefined' && Tex.tileCanvas && Tex.hasTile && (tiles || Tex.hasTile(it.iconBlock))){
+        const t = (tiles && (tiles.all || tiles.top || tiles.side || tiles.front)) || it.iconBlock || 'stone';
+        cache[itemId] = blockIcon(t, t, t);
+        return cache[itemId];
+      }
+    }
+    if (it && it.iconFn && typeof painters !== 'undefined' && painters[it.iconFn]){
+      cache[itemId] = painters[it.iconFn](itemId);
+      return cache[itemId];
+    }
     cache[itemId] = missingIcon();
     return cache[itemId];
   }
@@ -1052,6 +1118,7 @@ const Icons = (() => {
   async function loadPack(packName){
     if (packName === 'imported'){
       clearCache();
+      applyModIcons();
       if (typeof UI !== 'undefined' && UI.refreshAll) UI.refreshAll();
       return;
     }
@@ -1074,8 +1141,8 @@ const Icons = (() => {
         } catch(e){ /* 缺图保留中性缺失图标 */ }
       }));
     }
-    clearCache();
+    applyModIcons();
     if (typeof UI !== 'undefined' && UI.refreshAll) UI.refreshAll();
   }
-  return { get, img, clearCache, loadPack, applyImport, defaultItemMap: ITEM_ICON_MAP };
+  return { get, img, clearCache, loadPack, applyImport, setItemIcon, defaultItemMap: ITEM_ICON_MAP };
 })();

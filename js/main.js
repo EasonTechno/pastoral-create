@@ -630,6 +630,7 @@ const Game = (() => {
     $('loading').classList.add('hidden');
     state = 'planet';
     Sound.Music.setMode(World.biome.haz ? 'danger' : 'planet');
+    if (window.Mods) Mods.emit('planetReady', { planet: SYSTEM_PLANETS[pid], seed: World.seed, biome: World.biome, creative });
   }
   function registerSpawnFarm(){
     const f = World.spawnFarm;
@@ -663,6 +664,7 @@ const Game = (() => {
     dayCount = 1; dayTime = 0.3;
     galaxyCount = 1;
     Space.restoreGalaxy(HOME_GALAXY_SEED);
+    if (window.Mods) Mods.resetData();
     $('boot').classList.add('hidden');
     UI.buildHotbar();
     // 重置
@@ -693,6 +695,7 @@ const Game = (() => {
       UI.bigMessage('紧急迫降', SYSTEM_PLANETS[0].name + ' · ' + World.biome.name);
       announceQuest();
     }
+    if (window.Mods) Mods.emit('newGame', { creative, planet: SYSTEM_PLANETS[0], seed: World.seed });
     lockPointer();
     if (window.Net) Net.onWorldReady();   // 联机：主机世界就绪，同步给访客
   }
@@ -706,6 +709,7 @@ const Game = (() => {
     dayCount = 1;
     galaxyCount = 1;
     Space.restoreGalaxy(init.galaxySeed !== undefined ? init.galaxySeed : HOME_GALAXY_SEED);
+    if (window.Mods) init.modData ? Mods.restoreData(init.modData) : Mods.resetData();
     $('boot').classList.add('hidden');
     UI.closeAll();
     UI.buildHotbar();
@@ -744,6 +748,7 @@ const Game = (() => {
     dropMult = 1;
     activeSaveKey = null;
     dayCount = 1; dayTime = 0.3;
+    if (window.Mods) Mods.resetData();
     techState = { survival: true, farming: true };
     flags = {}; questIdx = 0; fuelLoaded = 0; farmStats = { till: 0, plant: 0, water: 0, harvest: 0 };
     visitedPlanets = {};
@@ -769,6 +774,7 @@ const Game = (() => {
     $('hud').classList.remove('hidden');
     UI.refreshAll();
     UI.bigMessage('Pastoral Create', SYSTEM_PLANETS[0].name + ' · WASD 平移 · 滚轮缩放 · 左键耕作 · 右键机器', 4200);
+    if (window.Mods) Mods.emit('newGame', { creative, planet: SYSTEM_PLANETS[0], seed: World.seed });
   }
 
   // ---------- 任务系统 ----------
@@ -832,16 +838,19 @@ const Game = (() => {
     flags.mined = true;
     checkQuest();
     UI.refreshQuests && UI.refreshQuests();
+    if (window.Mods) Mods.emit('blockMined', { key: def.key, def });
   }
   function onBlockPlaced(blockKey){
     placedCount[blockKey] = (placedCount[blockKey] || 0) + 1;
     checkQuest();
     UI.refreshQuests && UI.refreshQuests();
+    if (window.Mods) Mods.emit('blockPlaced', { key: blockKey, def: BLOCKS[blockKey] });
   }
   function onFarmEvent(ev){
     farmStats[ev] = (farmStats[ev] || 0) + 1;
     checkQuest();
     UI.refreshQuests && UI.refreshQuests();
+    if (window.Mods) Mods.emit('farmEvent', ev);
   }
   function techDone(id){ return !!techState[id]; }
   function completeTech(id){
@@ -2515,6 +2524,8 @@ const Game = (() => {
     const STATION_STATES = ['station', 'docked', 'dockAnim', 'stationed', 'stationWalk', 'undockAnim'];
     return {
       v: 4, state: STATION_STATES.includes(state) ? 'space' : state,
+      mods: window.Mods ? Mods.enabledIds() : [],
+      modData: window.Mods ? Mods.serializeData() : null,
       currentPlanet, dayTime, dayCount, playTime, questIdx, flags, techState, market, farmStats,
       fuelLoaded, placedCount, creative, dropMult,
       galaxySeed: window.Space ? Space.getCurrentGalaxySeed() : HOME_GALAXY_SEED, galaxyCount,
@@ -2587,6 +2598,12 @@ const Game = (() => {
       }
       if (Array.isArray(d.planets)) d.planets = {};
     }
+    let missingMods = null;
+    if (window.Mods && Array.isArray(d.mods) && d.mods.length){
+      const have = Mods.enabledIds();
+      missingMods = d.mods.filter(id => !have.includes(id));
+    }
+    if (window.Mods) Mods.restoreData(d.modData);
     $('boot').classList.add('hidden');
     UI.closeAll();
     activeSaveKey = key;
@@ -2624,7 +2641,11 @@ const Game = (() => {
     UI.buildHotbar();
     UI.refreshAll();
     UI.bigMessage('档案恢复', '欢迎回来，旅行者' + (creative ? ' · 创造模式' : ''));
+    if (missingMods && missingMods.length){
+      setTimeout(() => UI.bigMessage('缺少模组', '该存档由这些模组创建：' + missingMods.join('、') + '。请先安装并启用它们，否则相关内容可能异常。', 8000), 4600);
+    }
     lockPointer();
+    if (window.Mods) Mods.emit('loadGame', { key, creative, planet: SYSTEM_PLANETS[currentPlanet] });
     if (window.Net) Net.onWorldReady();   // 联机：主机世界就绪，同步给访客
     return true;
   }
@@ -3479,6 +3500,7 @@ const Game = (() => {
     if (state === 'menu' || state === 'loading') return;
     if (paused) return;
     playTime += dt;
+    if (window.Mods) Mods.emit('tick', dt, { state, dayTime, dayCount, playTime, camera, camTarget, player: Player.pos });
 
     if (state === 'planet'){
       const day = updateDayNight(dt);
@@ -4225,6 +4247,7 @@ const Game = (() => {
   $('btnResume').onclick = () => { Sound.play('uiClose'); UI.closeAll(); };
   $('btnSave').onclick = () => { Sound.play('uiClick'); UI.openSavePanel('save'); };
   $('btnSettings').onclick = () => { Sound.play('uiOpen'); $('pausePanel').classList.add('hidden'); $('settingsPanel').classList.remove('hidden'); refreshSettingsUI(); };
+  $('btnMods').onclick = () => { Sound.play('uiOpen'); $('pausePanel').classList.add('hidden'); UI.toggle('modsPanel'); };
   $('btnQuit').onclick = () => { if (activeSaveKey) save(); location.reload(); };
   $('volSlider').oninput = e => Sound.setVolume(e.target.value / 100);
   $('dialogBox').addEventListener('mousedown', e => { e.stopPropagation(); advanceDialog(); });
@@ -4256,6 +4279,7 @@ const Game = (() => {
     menuAction('mnuEncy', () => UI.openEncyclopedia());
     menuAction('mnuMap', () => togglePlanetMap());
     menuAction('mnuTrade', () => UI.openTrade());
+    menuAction('mnuMods', () => UI.toggle('modsPanel'));
     menuAction('mnuPause', () => UI.toggle('pausePanel'));
     const actionButton = $('mbRightClick');
     actionButton.onpointerdown = e => { mobileActionHeld = true; mobileActionUsed = false; actionButton.setPointerCapture(e.pointerId); e.preventDefault(); };
@@ -4399,6 +4423,10 @@ const Game = (() => {
     $('settingsPanel').classList.remove('hidden');
     refreshSettingsUI();
   };
+  if ($('btnModsBoot')) $('btnModsBoot').onclick = () => {
+    Sound.begin(); Sound.play('uiOpen');
+    UI.toggle('modsPanel');
+  };
 
   // ---------- 星球地图：标记表单 ----------
   $('mapAddBtn').onclick = addMapMark;
@@ -4515,3 +4543,4 @@ try {
   localStorage.setItem('item_texture_pack', 'default');
 } catch(e){}
 if (typeof Tex !== 'undefined') Tex.applySavedPack();
+if (window.Mods && window.Game) Mods.emit('gameReady', window.Game);

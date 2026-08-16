@@ -101,11 +101,11 @@ const UI = (() => {
 
   // ---------- 通用 ----------
   function anyPanelOpen(){
-    return ['invPanel','machinePanel','tradePanel','pausePanel','helpPanel','savePanel','settingsPanel','mapPanel','encyPanel','breedingPanel','techPanel','accountPanel','questTreePanel']
+    return ['invPanel','machinePanel','tradePanel','pausePanel','helpPanel','savePanel','settingsPanel','mapPanel','encyPanel','breedingPanel','techPanel','accountPanel','questTreePanel','modsPanel']
       .some(id => !$(id).classList.contains('hidden'));
   }
   function closeAll(){
-    ['invPanel','machinePanel','techPanel','tradePanel','pausePanel','helpPanel','savePanel','settingsPanel','mapPanel','encyPanel','breedingPanel','accountPanel','questTreePanel']
+    ['invPanel','machinePanel','techPanel','tradePanel','pausePanel','helpPanel','savePanel','settingsPanel','mapPanel','encyPanel','breedingPanel','accountPanel','questTreePanel','modsPanel']
       .forEach(id => $(id).classList.add('hidden'));
     openMachine = null;
     tooltip().classList.add('hidden');   // 强制隐藏，不受触摸守卫影响
@@ -127,6 +127,7 @@ const UI = (() => {
       Sound.play('uiOpen');
       if (id === 'invPanel'){ wsMode = 'craft'; wsBackMode = null; wsTraitGetter = null; refreshInv(); }
        if (id === 'techPanel') refreshTech();
+      if (id === 'modsPanel' && window.Mods && Mods.refreshPanel) Mods.refreshPanel();
       document.exitPointerLock && document.exitPointerLock();
     } else {
       Sound.play('uiClose');
@@ -613,6 +614,7 @@ const UI = (() => {
       if (r.where !== 'hand' && r.where !== 'both') continue;
       if (r.hidden) continue;
       const outItem = Object.keys(r.out)[0];
+      if (!ITEMS[outItem]) continue;   // 模组配方引用了未注册物品时安全跳过
       if (craftCat !== 'all' && ITEMS[outItem].cat !== craftCat) continue;
       const el = document.createElement('div');
       el.className = 'recipe';
@@ -2066,7 +2068,7 @@ const UI = (() => {
   // mode: 'load'（主菜单读档）| 'save'（游戏内存档）
   function openSavePanel(mode){
     const el = $('savePanel');
-    ['invPanel','machinePanel','techPanel','tradePanel','helpPanel','pausePanel','settingsPanel'].forEach(id => $(id).classList.add('hidden'));
+    ['invPanel','machinePanel','techPanel','tradePanel','helpPanel','pausePanel','settingsPanel','modsPanel'].forEach(id => $(id).classList.add('hidden'));
     el.classList.remove('hidden');
     $('saveTitle').textContent = mode === 'save' ? '◈ 存档 — 覆盖或新建' : '◈ 继续档案 — 选择存档';
     $('btnNewSave').style.display = mode === 'save' ? '' : 'none';
