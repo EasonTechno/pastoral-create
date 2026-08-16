@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.23] - 2026-08-16
+- 新增工业熔炉塔（furnace_tower，冶炼速度 ×2.0）。
+
 ## [1.2.22] - 2026-08-16
 - 新增大型收集点（collector_tower，36 格）。
 
