@@ -416,7 +416,7 @@ const Factory = (() => {
     const data = machineData(def.machine);
     if ((def.machine === 'chest' || def.machine === 'collector') && def.slots) data.slots = new Array(def.slots).fill(null);
     const m = {
-      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, genMul: def.genMul || 1, minerSpeed: def.minerSpeed || 1, dir: dir || 0,
+      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, genMul: def.genMul || 1, minerSpeed: def.minerSpeed || 1, fuelCap: def.fuelCap || 300, dir: dir || 0,
       data, mesh: null, animParts: null, active: false
     };
     const builder = builders[m.type];
@@ -466,7 +466,7 @@ const Factory = (() => {
         return (m.data.in[item] || 0) < r.in[item] * 3;
       }
       case 'belt': return beltCanAccept(m, 0);
-      case 'reactor': return item === 'uranium' && m.data.fuel < 300;
+      case 'reactor': return item === 'uranium' && m.data.fuel < (m.fuelCap || 300);
       case 'burner': case 'boiler': return !!FUEL_VALUE[item] && (!m.data.fuel || (m.data.fuel.item === item && m.data.fuel.n < 50));
       case 'planter': {
         const crop = Object.values(CROPS).find(c => c.seed === item);
@@ -1078,7 +1078,7 @@ const Factory = (() => {
         if (d.burn > 0){ d.burn -= dt; gen += POWER_GEN.boiler; m.active = true; }
         else m.active = false;
       }
-      if (m.type === 'reactor' && m.data.fuel > 0){ gen += POWER_GEN.reactor; m.data.fuel -= dt; m.active = true; }
+      if (m.type === 'reactor' && m.data.fuel > 0){ gen += (m.gen || POWER_GEN.reactor); m.data.fuel -= dt; m.active = true; }
       else if (m.type === 'reactor') m.active = false;
       if (POWER_USE[m.type]) use += POWER_USE[m.type];
     }
