@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.18] - 2026-08-16
+- 新增大型装配机（assembler_tower，装配速度 ×1.6）。
+
 ## [1.2.17] - 2026-08-16
 - 新增大型精炼厂（refinery_tower，速度 ×1.6）；装配/精炼机器支持 `def.speed` 加速。
 
