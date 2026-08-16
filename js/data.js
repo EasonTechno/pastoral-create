@@ -93,6 +93,9 @@ const BLOCKS = {
   planter_tower:{ id: 90, name: '大型播种机', hard: 1.3, machine: 'planter', range: 3, tiles: { all: 'metal', top: 'miner_top' }, drops: [{ item: 'planter_tower_b', n: 1 }] },
   collector_tower:{ id: 91, name: '大型收集点', hard: 1.3, machine: 'collector', slots: 36, tiles: { all: 'chest_side', top: 'storage_top' }, drops: [{ item: 'collector_tower_b', n: 1 }] },
   furnace_tower:{ id: 92, name: '工业熔炉塔', hard: 1.8, machine: 'furnace', speed: 2.0, tiles: { all: 'stone', front: 'furnace_front' }, drops: [{ item: 'furnace_tower_b', n: 1 }] },
+  metal_frame:{ id: 93, name: '金属框架', hard: 1.2, tiles: { all: 'metal' }, drops: [{ item: 'metal_frame_b', n: 1 }] },
+  industrial_pipe:{ id: 94, name: '工业管道', hard: 1.2, tiles: { all: 'metal_dark' }, drops: [{ item: 'industrial_pipe_b', n: 1 }] },
+  warning_stripe:{ id: 95, name: '警告条', hard: 1.2, tiles: { all: 'gold_block' }, drops: [{ item: 'warning_stripe_b', n: 1 }] },
 };
 const BLOCK_BY_ID = {};
 for (const k in BLOCKS){ BLOCKS[k].key = k; BLOCK_BY_ID[BLOCKS[k].id] = BLOCKS[k]; if (BLOCKS[k].solid === undefined) BLOCKS[k].solid = true; }
@@ -190,6 +193,9 @@ const ITEMS = {
   planter_tower_b:  { name: '大型播种机', cat: 'mach', iconBlock: 'planter_tower', block: 'planter_tower', stack: 20, desc: '覆盖 7×7 的大型自动播种机。', price: 1300 },
   collector_tower_b:{ name: '大型收集点', cat: 'mach', iconBlock: 'collector_tower', block: 'collector_tower', stack: 20, desc: '36 格大型卸货收集点。', price: 300 },
   furnace_tower_b:  { name: '工业熔炉塔', cat: 'mach', iconBlock: 'furnace_tower', block: 'furnace_tower', stack: 20, desc: '冶炼速度 ×2.0 的工业熔炉塔。', price: 260 },
+  metal_frame_b:   { name: '金属框架', cat: 'blk', iconBlock: 'metal_frame', block: 'metal_frame', stack: 250, desc: '工业建筑框架。', price: 10 },
+  industrial_pipe_b:{ name: '工业管道', cat: 'blk', iconBlock: 'industrial_pipe', block: 'industrial_pipe', stack: 250, desc: '管道与支撑结构。', price: 9 },
+  warning_stripe_b:{ name: '警告条', cat: 'blk', iconBlock: 'warning_stripe', block: 'warning_stripe', stack: 250, desc: '黄黑警示装饰。', price: 16 },
 };
 for (const k in ITEMS){ ITEMS[k].id = k; if (!ITEMS[k].stack) ITEMS[k].stack = 250; }
 
@@ -341,6 +347,9 @@ const RECIPES = [
   { id: 'planter_tower_b', out: { planter_tower_b: 1 }, in: { planter_b: 1, iron: 8, gear: 4, circuit: 1 }, where: 'both', time: 7.0, tech: 'agri_auto' },
   { id: 'collector_tower_b', out: { collector_tower_b: 1 }, in: { collector_b: 1, iron: 6, planks_b: 4 }, where: 'both', time: 3.0, tech: 'automation' },
   { id: 'furnace_tower_b', out: { furnace_tower_b: 1 }, in: { stone: 10, iron: 6, gear: 2 }, where: 'both', time: 5.0, tech: 'metallurgy' },
+  { id: 'metal_frame_b',   out: { metal_frame_b: 4 },    in: { iron: 2 },        where: 'both', time: 1.0 },
+  { id: 'industrial_pipe_b',out: { industrial_pipe_b: 4 },in: { iron: 2, copper: 1 }, where: 'both', time: 1.2 },
+  { id: 'warning_stripe_b', out: { warning_stripe_b: 3 }, in: { gold: 1, iron: 1 }, where: 'both', time: 1.0 },
 ];
 const RECIPE_BY_ID = {}; RECIPES.forEach(r => RECIPE_BY_ID[r.id] = r);
 
@@ -419,7 +428,7 @@ BIOMES.redmoss.animal = { body: 0xc25a48, legs: 0x8a3a2c, eye: 0xffe8a0, count: 
 BIOMES.hive.animal    = { body: 0xd8862a, legs: 0x8a5210, eye: 0x1a1a1a, count: 10, name: '蜂窝守卫', type: 'strider' };
 
 // ================= 商品交易表 =================
-const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed','vent_pipe_b','cable_spool_b','light_panel_b','battery_b','boiler_b','fast_belt_b','storage_vault_b','compressor_b','compact_stone','solar_farm_b','wind_tower_b','deep_miner_b','refinery_tower_b','assembler_tower_b','reactor_tower_b','irrigator_tower_b','harvester_tower_b','planter_tower_b','collector_tower_b','furnace_tower_b'];
+const TRADE_GOODS = ['wheat','potato','carrot','beetroot','pumpkin','sweet_berry','flour','bread','jam','coal','iron_ore','copper_ore','gold_ore','iron','copper','gold','gear','wire','circuit','stone','sand','planks_b','glass_b','wheat_seed','potato_seed','carrot_seed','beet_seed','pumpkin_seed','berry_seed','vent_pipe_b','cable_spool_b','light_panel_b','battery_b','boiler_b','fast_belt_b','storage_vault_b','compressor_b','compact_stone','solar_farm_b','wind_tower_b','deep_miner_b','refinery_tower_b','assembler_tower_b','reactor_tower_b','irrigator_tower_b','harvester_tower_b','planter_tower_b','collector_tower_b','furnace_tower_b','metal_frame_b','industrial_pipe_b','warning_stripe_b'];
 
 // ================= 任务线 =================
 // type: collect(拥有n个) / place / tech / farm(农田行为计数)
