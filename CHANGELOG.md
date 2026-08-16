@@ -3,6 +3,9 @@
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
 ## [1.2.5] - 2026-08-16 (补充)
+- 治理：新增 `tools/sync-prod.sh` 一键同步本地线上目录（先红线预检、不触碰 server/data）。
+
+## [1.2.5] - 2026-08-16 (补充)
 - 治理：新增 `tools/check-redlines.sh` 推送前红线预检；`tools/push-github.sh` 推送前自动执行预检。
 
 ## [1.2.5] - 2026-08-16

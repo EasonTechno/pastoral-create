@@ -48,6 +48,7 @@ node tools/version.js refresh
 ```bash
 bash tools/check-redlines.sh   # 红线预检（不通过会阻止推送）
 ./tools/push-github.sh         # 一键推送（内部先跑红线预检）
+bash tools/sync-prod.sh        # 一键同步本地线上目录 /opt（也先跑红线预检）
 ```
 
 ## 测试
