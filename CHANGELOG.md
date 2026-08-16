@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.13] - 2026-08-16 (补充)
+- 治理：新增 GitHub Actions 红线预检 CI（`.github/workflows/redline.yml`）。
+
 ## [1.2.13] - 2026-08-16
 - 模组/游戏运行时暴露版本号 API（`Mods.version`、`Game.version`、`PC.game.version`）。
 

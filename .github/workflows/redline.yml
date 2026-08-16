@@ -1,0 +1,14 @@
+name: maintenance-redline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  redline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 红线预检（MAINTENANCE.md）
+        run: bash tools/check-redlines.sh

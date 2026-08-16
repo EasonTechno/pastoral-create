@@ -51,6 +51,10 @@ bash tools/check-redlines.sh   # 红线预检（不通过会阻止推送）
 bash tools/sync-prod.sh        # 一键同步本地线上目录 /opt（也先跑红线预检）
 ```
 
+## CI
+
+GitHub Actions（`.github/workflows/redline.yml`）会在每次 push/PR 自动跑 `tools/check-redlines.sh`，红线不通过会失败并阻止合并。
+
 ## 测试
 
 ```bash
