@@ -43,6 +43,13 @@ node tools/version.js refresh
 - [ ] 不修改根 `README.md`（它由远端原始内容维护）
 - [ ] 改过 css/js/静态资源后跑过 `version.js refresh`
 
+## 推送前必做
+
+```bash
+bash tools/check-redlines.sh   # 红线预检（不通过会阻止推送）
+./tools/push-github.sh         # 一键推送（内部先跑红线预检）
+```
+
 ## 测试
 
 ```bash

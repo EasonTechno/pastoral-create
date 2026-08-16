@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.5] - 2026-08-16 (补充)
+- 治理：新增 `tools/check-redlines.sh` 推送前红线预检；`tools/push-github.sh` 推送前自动执行预检。
+
 ## [1.2.5] - 2026-08-16
 - 修复：读档时强制按该档重置/恢复模组自定义数据（切到无 modData 的档不再残留上一档数据），严格实现“模组机制基于存档”的隔离。
 
