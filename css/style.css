@@ -418,6 +418,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:14px;background:var(--band
 .net-code,.net-addr{background:var(--cream-hi);border:2px solid var(--frame);color:var(--ink);font:11px var(--font-ui);padding:6px 8px;resize:none}
 .net-hint{font-size:11px;color:var(--ink-2);line-height:1.5;border-left:2px solid var(--frame);padding-left:8px;background:var(--cream-2)}
 
+#accountPanel{width:min(720px,94vw)}
 .account-body{width:min(700px,92vw);background:var(--cream);background-image:var(--dither);color:var(--ink);border:2px solid var(--edge);box-shadow:0 0 0 2px var(--frame),6px 6px 0 rgba(46,26,10,.35)}
 .account-columns{display:grid;grid-template-columns:minmax(230px,1fr) minmax(240px,1fr);gap:14px}
 .account-main{min-width:0}
