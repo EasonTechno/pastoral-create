@@ -70,8 +70,8 @@ const BLOCKS = {
   filter:   { id: 68, name: '过滤器', hard: 0.9, machine: 'filter', tiles: { all: 'metal', front: 'vent' }, drops: [{ item: 'filter_b', n: 1 }] },
   chute:    { id: 69, name: '向漏斗', hard: 0.9, machine: 'chute', tiles: { all: 'metal_dark', top: 'storage_top' }, drops: [{ item: 'chute_b', n: 1 }] },
   // ---- 工业扩展 ----
-  foundry:  { id: 70, name: '铸造炉', hard: 1.4, machine: 'furnace', tiles: { all: 'metal_dark', front: 'furnace_front' }, drops: [{ item: 'foundry_b', n: 1 }] },
-  smelter:  { id: 71, name: '精炼熔炉', hard: 1.4, machine: 'furnace', tiles: { all: 'metal', front: 'furnace_front' }, drops: [{ item: 'smelter_b', n: 1 }] },
+  foundry:  { id: 70, name: '铸造炉', hard: 1.4, machine: 'furnace', speed: 1.35, tiles: { all: 'metal_dark', front: 'furnace_front' }, drops: [{ item: 'foundry_b', n: 1 }] },
+  smelter:  { id: 71, name: '精炼熔炉', hard: 1.4, machine: 'furnace', speed: 1.6, tiles: { all: 'metal', front: 'furnace_front' }, drops: [{ item: 'smelter_b', n: 1 }] },
   iron_box: { id: 72, name: '加固箱', hard: 1.5, machine: 'chest', tiles: { all: 'metal', top: 'vent' }, drops: [{ item: 'iron_box_b', n: 1 }] },
   vent_pipe:{ id: 73, name: '通风管道', hard: 1.1, tiles: { all: 'vent' }, drops: [{ item: 'vent_pipe_b', n: 1 }] },
   cable_spool:{ id: 74, name: '电缆卷', hard: 1.0, tiles: { all: 'copper_block' }, drops: [{ item: 'cable_spool_b', n: 1 }] },

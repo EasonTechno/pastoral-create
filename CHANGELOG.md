@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.4] - 2026-08-16
+- 工业方块增强：铸造炉 / 精炼熔炉现具备真实的冶炼加速（`BLOCKS[].speed` 驱动，1.35× / 1.6×）。
+
 ## [1.2.3] - 2026-08-16
 - 仓库治理：新增 `MAINTENANCE.md` / `CONTRIBUTING.md` 发布红线。
 - 清除第三方材质贴图（`assets/textures/` 下 3270 张 PNG）与 20MB 完整字体 `.ttf`（按红线不应提交）。

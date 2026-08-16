@@ -410,7 +410,7 @@ const Factory = (() => {
     initMats();
     const def = BLOCKS[blockKey];
     const m = {
-      x, y, z, type: def.machine, blockKey, dir: dir || 0,
+      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, dir: dir || 0,
       data: machineData(def.machine), mesh: null, animParts: null, active: false
     };
     const builder = builders[m.type];
@@ -676,7 +676,7 @@ const Factory = (() => {
         const r = RECIPES.find(r => r.where === 'furnace' && r.in[d.in.item]);
         if (r){
           m.active = true;
-          d.prog += dt / r.time;
+          d.prog += (dt * (m.speed || 1)) / r.time;
           if (d.prog >= 1){
             d.prog = 0;
             const outItem = Object.keys(r.out)[0];
