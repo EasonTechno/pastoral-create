@@ -410,7 +410,7 @@ const Factory = (() => {
     initMats();
     const def = BLOCKS[blockKey];
     const m = {
-      x, y, z, type: def.machine, dir: dir || 0,
+      x, y, z, type: def.machine, blockKey, dir: dir || 0,
       data: machineData(def.machine), mesh: null, animParts: null, active: false
     };
     const builder = builders[m.type];
@@ -1265,14 +1265,16 @@ const Factory = (() => {
   function serialize(){
     const arr = [];
     for (const m of machines.values()){
-      arr.push({ x: m.x, y: m.y, z: m.z, type: m.type, dir: m.dir, data: m.data });
+      arr.push({ x: m.x, y: m.y, z: m.z, type: m.type, block: m.blockKey, dir: m.dir, data: m.data });
     }
     return arr;
   }
   function deserialize(arr){
     reset();
     for (const s of arr){
-      const blockKey = Object.keys(BLOCKS).find(k => BLOCKS[k].machine === s.type);
+      let blockKey = s.block && BLOCKS[s.block] && BLOCKS[s.block].machine === s.type ? s.block : null;
+      if (!blockKey) blockKey = Object.keys(BLOCKS).find(k => BLOCKS[k].machine === s.type) || null;
+      if (!blockKey) continue;
       const m = place(s.x, s.y, s.z, blockKey, s.dir);
       m.data = s.data;
       delete m.spawnT;
