@@ -416,7 +416,7 @@ const Factory = (() => {
     const data = machineData(def.machine);
     if ((def.machine === 'chest' || def.machine === 'collector') && def.slots) data.slots = new Array(def.slots).fill(null);
     const m = {
-      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, genMul: def.genMul || 1, minerSpeed: def.minerSpeed || 1, fuelCap: def.fuelCap || 300, range: def.range || 2, fuelMul: def.fuelMul || 1, dir: dir || 0,
+      x, y, z, type: def.machine, blockKey, speed: def.speed || 1, beltSpeed: def.beltSpeed || 1, gen: def.gen || null, genMul: def.genMul || 1, minerSpeed: def.minerSpeed || 1, fuelCap: def.fuelCap || 300, range: def.range || 2, fuelMul: def.fuelMul || 1, priceMul: def.priceMul || 1, dir: dir || 0,
       data, mesh: null, animParts: null, active: false
     };
     const builder = builders[m.type];
@@ -563,7 +563,7 @@ const Factory = (() => {
   function sellToMarket(m, item){
     const it = ITEMS[item] || {};
     const mod = (window.Game && window.Game.market && window.Game.market[item]) || 1;
-    const price = Math.max(1, Math.round((it.price || 1) * mod * 0.8));
+    const price = Math.max(1, Math.round((it.price || 1) * mod * 0.8 * (m.priceMul || 1)));
     if (window.Player) window.Player.credits += price;
     m.data.earned += price;
     if (window.UI && window.UI.refreshHUD) window.UI.refreshHUD();

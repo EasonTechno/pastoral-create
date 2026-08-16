@@ -2,6 +2,9 @@
 
 本版本号与 `version.json` / `index.html` 的 `game-version` 保持一致。
 
+## [1.2.26] - 2026-08-16
+- 新增交易塔（trade_tower，售价 ×1.15；支持 `def.priceMul`）。
+
 ## [1.2.25] - 2026-08-16
 - 新增大型火力发电机（burner_tower，40kW、燃料效率 ×1.3；支持 `def.gen`/`def.fuelMul`）。
 
